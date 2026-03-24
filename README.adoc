@@ -1,0 +1,26 @@
+= jQAssistant SARIF Report Plugin
+
+This is the SARIF Report Plugin of https://jqassistant.org[jQAssistant^].
+
+It allows to generate JSON files in the https://docs.oasis-open.org/sarif/sarif/v2.1.0/cs01/sarif-v2.1.0-cs01.html[SARIF format] which can be used to display them e.g. in https://gitlab.com[GitHub] pull requests.
+
+For more information on jQAssistant see https://jqassistant.org[^].
+
+NOTE: Despite linking of source locations is implemented by this plugin the generated links are not valid yet. This requires a https://github.com/jQAssistant/jqassistant/issues/1077[change in jQAssistant] which is scheduled for one of the next releases.
+
+== Setup
+
+The plugin must be declared in the jQAssistant configuration:
+
+[source, yaml]
+..jqassistant.yml
+----
+jqassistant:
+  plugins:
+    - group-id: org.jqassistant.plugin
+      artifact-id: jqassistant-sarif-report-plugin
+      version: 1.0.0-SNAPSHOT
+----
+
+During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
+
