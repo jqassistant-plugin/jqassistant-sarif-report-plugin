@@ -2,7 +2,7 @@
 
 This is the SARIF Report Plugin of https://jqassistant.org[jQAssistant^].
 
-It allows to generate JSON files in the https://docs.oasis-open.org/sarif/sarif/v2.1.0/cs01/sarif-v2.1.0-cs01.html[SARIF format] which can be used to display them e.g. in https://gitlab.com[GitHub] pull requests.
+It allows to generate JSON files in the https://docs.oasis-open.org/sarif/sarif/v2.1.0/cs01/sarif-v2.1.0-cs01.html[SARIF format] which can be used to display them e.g. in https://github.com[GitHub] pull requests.
 
 For more information on jQAssistant see https://jqassistant.org[^].
 

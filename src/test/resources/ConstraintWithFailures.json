@@ -1,0 +1,56 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "jQAssitant"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "fee57e7b25a49e847bd283b8b3a2cd8965bad60857b2854a6a04e9f57ca31a9c",
+          "level": "error",
+          "message": {
+            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/org/jqassistant/plugin/codeclimate/report/it/TypeWithIssues.java"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+          }
+        },
+        {
+          "ruleId": "2032770290ca5bc2cb561263aaf74ce063dae829429763e8d71f3b063dca6035",
+          "level": "error",
+          "message": {
+            "text": "A failing constraint | Type='org.jqassistant.plugin.codeclimate.report.it.TypeWithIssues', Member='void issueMethod()'"
+          },
+          "location": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/org/jqassistant/plugin/codeclimate/report/it/TypeWithIssues.java"
+                },
+                "region": {
+                  "startLine": 10,
+                  "endLine": 11
+                }
+              }
+            }
+          ],
+          "properties": {
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+          }
+        }
+      ]
+    }
+  ]
+}
