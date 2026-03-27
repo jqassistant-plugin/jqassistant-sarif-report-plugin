@@ -32,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
+    strategy:
+      matrix:
+        sarif_report: ["ConstraintWithFailures.sarif", "ConstraintWithWarnings.sarif"]
     steps:
       - uses: actions/checkout@v5
       - uses: github/codeql-action/upload-sarif@v4
