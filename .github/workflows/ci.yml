@@ -27,3 +27,16 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  publish-sarif:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: '../src/test/resources'
+          category: jQAssistant
