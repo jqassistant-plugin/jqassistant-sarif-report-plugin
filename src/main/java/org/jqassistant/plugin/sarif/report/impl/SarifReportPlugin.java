@@ -132,6 +132,4 @@ public class SarifReportPlugin implements ReportPlugin {
         return empty();
     }
 
-
-
 }
