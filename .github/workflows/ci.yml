@@ -32,12 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
-    strategy:
-      matrix:
-        sarif_report: ["ConstraintWithFailures.json", "ConstraintWithWarnings.json"]
     steps:
       - uses: actions/checkout@v5
       - uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: 'src/test/resources/${{ matrix.sarif_report }}'
-          category: 'jQAssistant-${{ matrix.sarif_report }}'
+          sarif_file: 'src/test/resources/ConstraintWithFailures.json'
+          category: 'jQAssistant'
