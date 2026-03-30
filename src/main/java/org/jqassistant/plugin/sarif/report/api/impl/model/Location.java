@@ -9,18 +9,32 @@ import lombok.ToString;
 @ToString
 public class Location {
 
-    private String path;
-
-    private Lines lines;
+    private PhysicalLocation physicalLocation;
 
     @Builder
     @Getter
     @ToString
-    public static class Lines {
+    public static class PhysicalLocation {
 
-        private int begin;
+        private ArtifactLocation artifactLocation;
 
-        private int end;
+        @Builder
+        @Getter
+        @ToString
+        public static class ArtifactLocation {
+            private String uri;
+        }
 
+        private Region region;
+
+        @Builder
+        @Getter
+        @ToString
+        public static class Region {
+
+            int startLine;
+
+            int endLine;
+        }
     }
 }

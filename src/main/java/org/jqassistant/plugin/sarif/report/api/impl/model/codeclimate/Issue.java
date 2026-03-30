@@ -1,10 +1,11 @@
-package org.jqassistant.plugin.sarif.report.api.impl.model;
+package org.jqassistant.plugin.sarif.report.api.impl.model.codeclimate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-
+import org.jqassistant.plugin.sarif.report.api.impl.model.codeclimate.Location;
+import org.jqassistant.plugin.sarif.report.api.impl.model.Severity;
 
 @Builder
 @Getter

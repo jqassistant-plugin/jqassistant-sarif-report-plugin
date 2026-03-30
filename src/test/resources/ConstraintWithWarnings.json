@@ -25,6 +25,7 @@
            }
          ],
          "properties": {
+           "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
          }
         },
@@ -48,6 +49,7 @@
             }
           ],
           "properties": {
+            "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
           }
         }
