@@ -1,0 +1,10 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.4"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.4 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-plugin-v2.4.xsd"
+                    name="jQAssistant SARIF Report Plugin" id="jqa.plugin.sarif.report"
+                    version="${project.version}">
+    <description>${project.description}</description>
+    <report>
+        <class id="sarif">org.jqassistant.plugin.codeclimate.report.impl.CodeClimateReportPlugin</class>
+    </report>
+</jqassistant-plugin>
