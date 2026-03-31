@@ -5,6 +5,6 @@
                     version="${project.version}">
     <description>${project.description}</description>
     <report>
-        <class id="sarif">org.jqassistant.plugin.codeclimate.report.impl.CodeClimateReportPlugin</class>
+        <class id="sarif">org.jqassistant.plugin.sarif.report.impl.SarifReportPlugin</class>
     </report>
 </jqassistant-plugin>

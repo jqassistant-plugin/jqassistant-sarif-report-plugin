@@ -15,7 +15,6 @@ import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.SourceLocation;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
-import com.buschmais.xo.neo4j.embedded.api.EmbeddedNeo4jXOProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +39,8 @@ public class SarifReportPlugin implements ReportPlugin {
 
     private static final SeverityMapper SEVERITY_MAPPER = Mappers.getMapper(SeverityMapper.class);
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(INDENT_OUTPUT).setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(INDENT_OUTPUT)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     private ReportContext reportContext;
 
@@ -87,6 +87,7 @@ public class SarifReportPlugin implements ReportPlugin {
                 .properties(SarifResult.SarifProperties.builder().checkName("[jQAssistant]" + constraint.getId()).build())
                 .level(SEVERITY_MAPPER.toReport(constraint.getSeverity()))
                 .ruleId(row.getKey());
+
         StringBuilder description = new StringBuilder(constraint.getDescription());
         String columnsValues = row.getColumns()
                 .entrySet()
@@ -94,12 +95,14 @@ public class SarifReportPlugin implements ReportPlugin {
                 .map(entry -> entry.getKey() + "='" + entry.getValue()
                         .getLabel() + "'")
                 .collect(joining(", "));
+
         if (!columnsValues.isEmpty()) {
             description.append(" | ")
                     .append(columnsValues);
         }
+
         resultBuilder.message(SarifResult.Message.builder().text(description.toString()).build());
-        getLocation(result, row).ifPresent(resultBuilder::locations);
+        getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 
@@ -109,36 +112,39 @@ public class SarifReportPlugin implements ReportPlugin {
             Column<?> column = row.getColumns()
                     .get(primaryColumnName.get());
             Optional<SourceLocation<?>> optionalSourceLocation = column.getSourceLocation();
+
             if (optionalSourceLocation.isPresent()) {
+
                 SourceLocation<?> sourceLocation = optionalSourceLocation.get();
-                Location.LocationBuilder locationBuilder = Location.builder()
-                        .physicalLocation(Location.PhysicalLocation.builder()
-                                .artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
-                                        .uri(sourceLocation.getFileName())
-                                        .build())
-                                .build());
+
+                Location.LocationBuilder locationBuilder = Location.builder();
+                Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
+
+                physicalLocationBuilder.artifactLocation(
+                        Location.PhysicalLocation.ArtifactLocation.builder()
+                                .uri(sourceLocation.getFileName())
+                                .build()
+                );
+
                 if (sourceLocation instanceof FileLocation) {
                     FileLocation fileLocation = (FileLocation) sourceLocation;
-                    fileLocation.getStartLine()
-                            .ifPresent(startLine -> {
-                                locationBuilder = Location.builder()
-                                        .physicalLocation(Location.PhysicalLocation.builder()
-                                                .region(Location.PhysicalLocation.Region.builder()
-                                                        .startLine(startLine)
-                                                        .build())
-                                                .build())
-                                        .build();
-                                Location.Lines.LinesBuilder linesBuilder = Location.Lines.builder()
-                                        .begin(startLine);
-                                fileLocation.getEndLine()
-                                        .ifPresent(linesBuilder::end);
-                                locationBuilder.lines(linesBuilder.build());
-                            });
+
+                    fileLocation.getStartLine().ifPresent(start -> {
+                        Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
+                                Location.PhysicalLocation.Region.builder().startLine(start);
+
+                        fileLocation.getEndLine().ifPresent(regionBuilder::endLine);
+
+                        physicalLocationBuilder.region(regionBuilder.build());
+                    });
                 }
-                return Optional.of(locationBuilder.build());
+                Location location = locationBuilder
+                        .physicalLocation(physicalLocationBuilder.build())
+                        .build();
+
+                return Optional.of(location);
             }
         }
         return empty();
     }
-
 }
