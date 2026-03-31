@@ -19,6 +19,8 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.jqassistant.plugin.sarif.report.api.impl.model.Run;
+import org.jqassistant.plugin.sarif.report.api.impl.model.SarifLog;
 import org.jqassistant.plugin.sarif.report.api.impl.model.SarifResult;
 import org.jqassistant.plugin.sarif.report.api.impl.model.Location;
 import org.mapstruct.factory.Mappers;
@@ -52,14 +54,12 @@ public class SarifReportPlugin implements ReportPlugin {
     }
 
     @Override
-    public void begin() {
-        results = new LinkedList<>();
-    }
+    public void begin() { results = new LinkedList<>(); }
 
     @Override
     public void setResult(Result<? extends ExecutableRule> result) {
         Result.Status status = result.getStatus();
-        if (FAILURE.equals(status) || WARNING.equals(status)) {
+    //    if (FAILURE.equals(status) || WARNING.equals(status)) {
             ExecutableRule<?> executableRule = result.getRule();
             Constraint constraint = (Constraint) executableRule;
             for (Row row : result.getRows()) {
@@ -67,16 +67,27 @@ public class SarifReportPlugin implements ReportPlugin {
                     results.add(getResult(result, constraint, row));
                 }
             }
-        }
+      //  }
     }
 
     @Override
     public void end() throws ReportException {
+
         File reportDirectory = reportContext.getReportDirectory(REPORT_DIRECTORY);
+
+        SarifLog report = SarifLog.builder()
+                .runs(List.of(
+                        Run.builder()
+                                .tool(Run.Tool.builder()
+                                        .driver(Run.Tool.Driver.builder().build())
+                                .build())
+                                .results(this.results)
+                        .build()
+                )).build();
         try {
             File file = new File(reportDirectory, REPORT_FILE).getCanonicalFile();
             log.info("Writing SARIF report to {}.", file);
-            OBJECT_MAPPER.writeValue(file, results);
+            OBJECT_MAPPER.writeValue(file, report);
         } catch (IOException e) {
             throw new ReportException("Failed to write SARIF report file.", e);
         }

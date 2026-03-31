@@ -25,6 +25,7 @@ public class Run {
         @ToString
         public static class Driver {
 
+            @Builder.Default
             private final String name = "jQAssistant";
 
         }

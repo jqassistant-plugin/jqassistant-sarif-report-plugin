@@ -38,7 +38,8 @@ public class SarifResult {
     @ToString
     public static class SarifProperties {
 
-        private final String type;
+        @Builder.Default
+        private final String type = "issue";
 
         @JsonProperty("check_name")
         private String checkName;

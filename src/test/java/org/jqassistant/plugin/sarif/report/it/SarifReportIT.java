@@ -2,6 +2,7 @@ package org.jqassistant.plugin.sarif.report.it;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;

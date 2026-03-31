@@ -9,7 +9,7 @@
         MATCH
           (t:Type{fqn: $fqn})-[:DECLARES]->(m:Member)
         WHERE
-          m.name starts with "result"
+          m.name starts with "issue"
         RETURN
           t as Type, m as Member
         ORDER BY
