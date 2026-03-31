@@ -19,7 +19,7 @@
            {
              "physicalLocation": {
                "artifactLocation": {
-                 "uri": "/org/jqassistant/plugin/codeclimate/report/it/TypeWithIssues.java"
+                 "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
                }
              }
            }
@@ -33,13 +33,13 @@
           "ruleId": "ef4037e5be07ba8714e4bdd45310daaa2e7414b6551be03b45b7e8df14001f0f",
           "level": "warning",
           "message": {
-            "text": "A failing constraint | Type='org.jqassistant.plugin.codeclimate.report.it.TypeWithIssues', Member='void issueMethod()'"
+            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/org/jqassistant/plugin/codeclimate/report/it/TypeWithIssues.java"
+                  "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
                 },
                 "region": {
                   "startLine": 10,

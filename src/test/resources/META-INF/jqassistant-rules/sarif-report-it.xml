@@ -1,0 +1,36 @@
+<jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v2.8"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://schema.jqassistant.org/rule/v2.8 http://schema.jqassistant.org/rule/jqassistant-rule-v2.8.xsd">
+
+    <constraint id="sarif-report-it:ConstraintWithFailures">
+        <requiresParameter name="fqn" type="String"/>
+        <description>A failing constraint</description>
+        <cypher><![CDATA[
+        MATCH
+          (t:Type{fqn: $fqn})-[:DECLARES]->(m:Member)
+        WHERE
+          m.name starts with "result"
+        RETURN
+          t as Type, m as Member
+        ORDER BY
+          t.fqn, m.signature
+        ]]></cypher>
+        <report primaryColumn="Member"/>
+    </constraint>
+
+    <constraint id="sarif-report-it:ConstraintWithWarnings" severity="minor">
+        <requiresParameter name="fqn" type="String"/>
+        <description>A failing Constraint</description>
+        <cypher><![CDATA[
+        MATCH
+          (t:Type{fqn: $fqn})-[:DECLARES]->(m:Member)
+        WHERE
+          m.name starts with "issue"
+        RETURN
+          t as Type, m as Member
+        ORDER BY
+          t.fqn, m.signature
+        ]]></cypher>
+        <report primaryColumn="Member"/>
+    </constraint>
+</jqassistant-rules>
