@@ -5,35 +5,35 @@
     {
       "tool": {
         "driver": {
-          "name": "jQAssitant"
+          "name": "jQAssistant"
         }
       },
       "results": [
         {
-          "ruleId": "579ab8e39eb1c746548560fa1c26442b57edae52ab4f6b4ef882d407460757ac",
+          "ruleId": "cb9cf8a2441ba5e90d706b268e9e7f2e8fb4500c03b7945c777d5d8f35e7e8d8",
           "level": "warning",
           "message": {
-            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'"
+            "text": "A failing Constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'"
           },
-         "locations": [
-           {
-             "physicalLocation": {
-               "artifactLocation": {
-                 "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
-               }
-             }
-           }
-         ],
-         "properties": {
-           "type": "issue",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
-         }
+          }
         },
         {
-          "ruleId": "ef4037e5be07ba8714e4bdd45310daaa2e7414b6551be03b45b7e8df14001f0f",
+          "ruleId": "73cbbe1ff0d5147b60d76df02dbc53d26306dc6b4b0107f90fa7e3d3ecec3113",
           "level": "warning",
           "message": {
-            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'"
+            "text": "A failing Constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'"
           },
           "locations": [
             {
@@ -42,8 +42,8 @@
                   "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
                 },
                 "region": {
-                  "startLine": 10,
-                  "endLine": 11
+                  "startLine": 9,
+                  "endLine": 9
                 }
               }
             }
