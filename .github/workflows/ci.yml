@@ -18,24 +18,28 @@ concurrency:
 
 jobs:
   build:
+    uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
+    with:
+      publish_snapshots: true
+    secrets:
+      ossrh_username: ${{ secrets.OSSRH_USERNAME }}
+      ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
+      ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
+      ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+      sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+  publish-sarif:
     runs-on: ubuntu-latest
-    permission:
-      contents: read
+    needs: build
+    permissions:
       security-events: write
     steps:
       - uses: actions/checkout@v5
-      - uses: jqassistant-tooling/jqassistant-github-actions/.github/workflows/ci.yml@main
+      - uses: actions/download-artifact@v4
         with:
-          publish_snapshots: true
-        secrets:
-          ossrh_username: ${{ secrets.OSSRH_USERNAME }}
-          ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
-          ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
-          ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Upload SARIF
+          name: sarif-report
+          path: target/jqassistant/report/sarif
+      - uses: github/codeql-action/upload-sarif@v4
         with:
-          uses: github/codeql-action/upload-sarif@v4
-          sarif_file: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'
+          sarif_file: 'src/test/resources/reference/ConstraintWithFailures'
           category: 'jQAssistant'
