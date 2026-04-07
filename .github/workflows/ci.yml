@@ -28,14 +28,19 @@ jobs:
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
 
-  publish-sarif:
-    runs-on: ubuntu-latest
+  sarifReportIT:
     needs: build
-    permissions:
-      security-events: write
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: github/codeql-action/upload-sarif@v4
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          sarif_file: 'src/test/resources/reference/ConstraintWithFailures.json'
-          category: 'jQAssistant'
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Run Test
+        run: mvn test -Dtest=SarifReportIT
+      - name: publish SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'
