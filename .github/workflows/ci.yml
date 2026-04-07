@@ -48,11 +48,3 @@ jobs:
         with:
           sarif_file: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'
           category: "jQAssistant"
-
-      - name: Inspect Sarif Content
-        run: |
-          RESULTS_COUNT=$(jq '.runs[].results | length' target/jqassistant/report/sarif/jqassistant-sarif-report.json)
-          echo "Found $RESULTS_COUNT violations in SARIF file."
-          if [ "$RESULTS_COUNT" -gt 0 ]; then
-            jq '.runs[].results[0]' target/jqassistant/report/sarif/jqassistant-sarif-report.json
-          fi
