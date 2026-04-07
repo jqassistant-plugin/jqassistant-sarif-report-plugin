@@ -132,8 +132,7 @@ public class SarifReportPlugin implements ReportPlugin {
                 Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
 
                 String rawPath = sourceLocation.getFileName();
-                String cleanPath = rawPath.startsWith("/") ? rawPath.substring(1) : rawPath;
-                String repoRelativePath = "src/main/java/" + cleanPath;
+                String repoRelativePath = "/src/test/java" + rawPath;
 
                 physicalLocationBuilder.artifactLocation(
                         Location.PhysicalLocation.ArtifactLocation.builder()
