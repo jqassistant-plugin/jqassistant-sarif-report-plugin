@@ -113,13 +113,14 @@ public class SarifReportPlugin implements ReportPlugin {
             description.append(" | ")
                     .append(columnsValues);
         }
-
-        resultBuilder.message(SarifResult.Message.builder().text(description.toString()).build());
+        String message = description.toString() + " | " + "Failure at: " + getPath(result, row);
+        resultBuilder.message(SarifResult.Message.builder().text(message).build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 
      private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
+        //replace with getPath()
         Optional<String> primaryColumnName = result.getPrimaryColumn();
         if (primaryColumnName.isPresent()) {
             Column<?> column = row.getColumns()
@@ -130,7 +131,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
                 SourceLocation<?> sourceLocation = optionalSourceLocation.get();
                 if (sourceLocation instanceof FileLocation) {
-
+        //replace with getPath()
                     Location.LocationBuilder locationBuilder = Location.builder();
                     Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
                     physicalLocationBuilder.artifactLocation(
@@ -158,4 +159,17 @@ public class SarifReportPlugin implements ReportPlugin {
         }
         return empty();
     }
+     private Optional<String> getPath (Result<? extends ExecutableRule> result, Row row) {
+         Optional<String> primaryColumnName = result.getPrimaryColumn();
+         if (primaryColumnName.isPresent()) {
+             Column<?> column = row.getColumns()
+                     .get(primaryColumnName.get());
+             Optional<SourceLocation<?>> optionalSourceLocation = column.getSourceLocation();
+             if (optionalSourceLocation.isPresent() && optionalSourceLocation.get() instanceof FileLocation) {
+                 String path = optionalSourceLocation.get().getFileName();
+                 return Optional.of(path);
+             }
+         }
+         return empty();
+     }
 }
