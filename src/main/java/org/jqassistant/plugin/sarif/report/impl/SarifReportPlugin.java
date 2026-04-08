@@ -113,7 +113,7 @@ public class SarifReportPlugin implements ReportPlugin {
             description.append(" | ")
                     .append(columnsValues);
         }
-        String message = description.toString() + " | " + "Failure at: " + getPath(result, row);
+        String message = description.toString() + " | " + "Failure at: " + getPath(result, row).orElse("");
         resultBuilder.message(SarifResult.Message.builder().text(message).build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
