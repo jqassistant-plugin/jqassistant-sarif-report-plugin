@@ -115,7 +115,7 @@ public class SarifReportPlugin implements ReportPlugin {
         }
 
         resultBuilder.message(SarifResult.Message.builder().text(description.toString()).build());
-        getLocation(result, row).ifPresent(resultBuilder::location);
+    //    getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 
