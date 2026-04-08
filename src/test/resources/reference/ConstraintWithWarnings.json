@@ -19,7 +19,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/.jqassistant.yml"
+                  "uri": ".jqassistant.yml"
                 }
               }
             }
@@ -39,7 +39,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/.jqassistant.yml"
+                  "uri": ".jqassistant.yml"
                 }
               }
             }
