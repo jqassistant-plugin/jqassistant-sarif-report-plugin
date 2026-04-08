@@ -40,10 +40,6 @@
               "physicalLocation": {
                 "artifactLocation": {
                   "uri": ".jqassistant.yml"
-                },
-                "region": {
-                  "startLine": 9,
-                  "endLine": 9
                 }
               }
             }
