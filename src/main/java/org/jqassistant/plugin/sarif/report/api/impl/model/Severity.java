@@ -8,7 +8,7 @@ public enum Severity {
     INFO,
     @JsonProperty(value = "warning")
     MINOR,
-    @JsonProperty (value = "warning")
+    @JsonProperty (value = "error")
     MAJOR,
     @JsonProperty(value = "error")
     CRITICAL,
