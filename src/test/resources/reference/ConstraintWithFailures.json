@@ -19,7 +19,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": ""
+                  "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
                 }
               }
             }
@@ -39,7 +39,11 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": ""
+                  "uri": "/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+                },
+                "region": {
+                  "startLine": 9,
+                  "endLine": 9
                 }
               }
             }
