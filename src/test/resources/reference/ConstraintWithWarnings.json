@@ -19,7 +19,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/src/test/java/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+                  "uri": ".jqassistant.yml"
                 }
               }
             }
@@ -39,7 +39,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "/src/test/java/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+                  "uri": ".jqassistant.yml"
                 },
                 "region": {
                   "startLine": 9,

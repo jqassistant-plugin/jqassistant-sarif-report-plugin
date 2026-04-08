@@ -131,27 +131,24 @@ public class SarifReportPlugin implements ReportPlugin {
                 SourceLocation<?> sourceLocation = optionalSourceLocation.get();
                 if (sourceLocation instanceof FileLocation) {
 
-                    String rawPath = sourceLocation.getFileName();
-                    String reportPath = "/src/test/java" + rawPath;
-
                     Location.LocationBuilder locationBuilder = Location.builder();
                     Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
                     physicalLocationBuilder.artifactLocation(
                             Location.PhysicalLocation.ArtifactLocation.builder()
-                                    .uri(reportPath)
+                                    .uri(".jqassistant.yml")
                                     .build()
                     );
 
-                    FileLocation fileLocation = (FileLocation) sourceLocation;
+                //    FileLocation fileLocation = (FileLocation) sourceLocation;
 
-                    fileLocation.getStartLine().ifPresent(start -> {
+                /*    fileLocation.getStartLine().ifPresent(start -> {
                         Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
                                 Location.PhysicalLocation.Region.builder().startLine(start);
 
                         fileLocation.getEndLine().ifPresent(regionBuilder::endLine);
 
                         physicalLocationBuilder.region(regionBuilder.build());
-                    });
+                    }); */
                     Location location = locationBuilder
                             .physicalLocation(physicalLocationBuilder.build())
                             .build();
