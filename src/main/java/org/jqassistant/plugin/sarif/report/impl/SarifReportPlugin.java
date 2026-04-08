@@ -135,7 +135,7 @@ public class SarifReportPlugin implements ReportPlugin {
                     Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
                     physicalLocationBuilder.artifactLocation(
                             Location.PhysicalLocation.ArtifactLocation.builder()
-                                    .uri(".jqassistant.yml")
+                                    .uri("/.jqassistant.yml")
                                     .build()
                     );
 
