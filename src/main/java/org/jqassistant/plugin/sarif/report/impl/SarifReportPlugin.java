@@ -2,7 +2,10 @@ package org.jqassistant.plugin.sarif.report.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -16,18 +19,17 @@ import com.buschmais.jqassistant.core.report.api.model.source.SourceLocation;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.jqassistant.plugin.sarif.report.api.impl.model.Run;
-import org.jqassistant.plugin.sarif.report.api.impl.model.SarifLog;
-import org.jqassistant.plugin.sarif.report.api.impl.model.SarifResult;
 import org.jqassistant.plugin.sarif.report.api.impl.model.Location;
+import org.jqassistant.plugin.sarif.report.api.impl.model.Run;
+import org.jqassistant.plugin.sarif.report.api.impl.model.SarifReport;
+import org.jqassistant.plugin.sarif.report.api.impl.model.SarifResult;
 import org.mapstruct.factory.Mappers;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.WARNING;
-import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.joining;
 
@@ -41,8 +43,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
     private static final SeverityMapper SEVERITY_MAPPER = Mappers.getMapper(SeverityMapper.class);
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(INDENT_OUTPUT)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
 
     private ReportContext reportContext;
 
@@ -59,7 +60,7 @@ public class SarifReportPlugin implements ReportPlugin {
     @Override
     public void setResult(Result<? extends ExecutableRule> result) {
         Result.Status status = result.getStatus();
-    //    if (FAILURE.equals(status) || WARNING.equals(status)) {
+        if (FAILURE.equals(status) || WARNING.equals(status)) {
             ExecutableRule<?> executableRule = result.getRule();
             Constraint constraint = (Constraint) executableRule;
             for (Row row : result.getRows()) {
@@ -67,7 +68,7 @@ public class SarifReportPlugin implements ReportPlugin {
                     results.add(getResult(result, constraint, row));
                 }
             }
-      //  }
+        }
     }
 
     @Override
@@ -75,7 +76,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
         File reportDirectory = reportContext.getReportDirectory(REPORT_DIRECTORY);
 
-        SarifLog report = SarifLog.builder()
+        SarifReport report = SarifReport.builder()
                 .runs(List.of(
                         Run.builder()
                                 .tool(Run.Tool.builder()
@@ -87,7 +88,8 @@ public class SarifReportPlugin implements ReportPlugin {
         try {
             File file = new File(reportDirectory, REPORT_FILE).getCanonicalFile();
             log.info("Writing SARIF report to {}.", file);
-            OBJECT_MAPPER.writeValue(file, report);
+            OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
+                    .writeValue(file, report);
         } catch (IOException e) {
             throw new ReportException("Failed to write SARIF report file.", e);
         }
@@ -127,20 +129,16 @@ public class SarifReportPlugin implements ReportPlugin {
             if (optionalSourceLocation.isPresent()) {
 
                 SourceLocation<?> sourceLocation = optionalSourceLocation.get();
-
-                Location.LocationBuilder locationBuilder = Location.builder();
-                Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
-
-                String rawPath = sourceLocation.getFileName();
-                String repoRelativePath = "src/test/java" + rawPath;
-
-                physicalLocationBuilder.artifactLocation(
-                        Location.PhysicalLocation.ArtifactLocation.builder()
-                                .uri(repoRelativePath)
-                                .build()
-                );
-
                 if (sourceLocation instanceof FileLocation) {
+
+                    Location.LocationBuilder locationBuilder = Location.builder();
+                    Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
+                    physicalLocationBuilder.artifactLocation(
+                            Location.PhysicalLocation.ArtifactLocation.builder()
+                                    .uri(sourceLocation.getFileName())
+                                    .build()
+                    );
+
                     FileLocation fileLocation = (FileLocation) sourceLocation;
 
                     fileLocation.getStartLine().ifPresent(start -> {
@@ -151,12 +149,11 @@ public class SarifReportPlugin implements ReportPlugin {
 
                         physicalLocationBuilder.region(regionBuilder.build());
                     });
+                    Location location = locationBuilder
+                            .physicalLocation(physicalLocationBuilder.build())
+                            .build();
+                    return Optional.of(location);
                 }
-                Location location = locationBuilder
-                        .physicalLocation(physicalLocationBuilder.build())
-                        .build();
-
-                return Optional.of(location);
             }
         }
         return empty();
