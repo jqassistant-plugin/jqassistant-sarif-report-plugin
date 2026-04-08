@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum Severity {
 
-    @JsonProperty(value = "info")
+    @JsonProperty(value = "note")
     INFO,
     @JsonProperty(value = "warning")
     MINOR,
-    @JsonProperty (value = "error")
+    @JsonProperty (value = "warning")
     MAJOR,
-    @JsonProperty(value = "critical")
+    @JsonProperty(value = "error")
     CRITICAL,
-    @JsonProperty(value = "blocker")
+    @JsonProperty(value = "error")
     BLOCKER
 
 }
