@@ -119,7 +119,7 @@ public class SarifReportPlugin implements ReportPlugin {
         return resultBuilder.build();
     }
 
-    private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
+    /* private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
         Optional<String> primaryColumnName = result.getPrimaryColumn();
         if (primaryColumnName.isPresent()) {
             Column<?> column = row.getColumns()
@@ -157,5 +157,5 @@ public class SarifReportPlugin implements ReportPlugin {
             }
         }
         return empty();
-    }
+    } */
 }
