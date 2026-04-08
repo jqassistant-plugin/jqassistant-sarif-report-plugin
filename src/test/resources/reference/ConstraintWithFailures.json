@@ -15,6 +15,15 @@
           "message": {
             "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'"
           },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ""
+                }
+              }
+            }
+          ],
           "properties": {
             "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
@@ -26,6 +35,15 @@
           "message": {
             "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'"
           },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ""
+                }
+              }
+            }
+          ],
           "properties": {
             "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"

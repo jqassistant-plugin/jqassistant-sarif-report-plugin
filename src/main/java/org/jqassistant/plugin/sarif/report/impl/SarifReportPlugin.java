@@ -115,11 +115,11 @@ public class SarifReportPlugin implements ReportPlugin {
         }
 
         resultBuilder.message(SarifResult.Message.builder().text(description.toString()).build());
-    //    getLocation(result, row).ifPresent(resultBuilder::location);
+        getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 
-    /* private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
+     private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
         Optional<String> primaryColumnName = result.getPrimaryColumn();
         if (primaryColumnName.isPresent()) {
             Column<?> column = row.getColumns()
@@ -135,20 +135,20 @@ public class SarifReportPlugin implements ReportPlugin {
                     Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
                     physicalLocationBuilder.artifactLocation(
                             Location.PhysicalLocation.ArtifactLocation.builder()
-                                    .uri(sourceLocation.getFileName())
+                                    .uri("")
                                     .build()
                     );
 
-                    FileLocation fileLocation = (FileLocation) sourceLocation;
+               //     FileLocation fileLocation = (FileLocation) sourceLocation;
 
-                    fileLocation.getStartLine().ifPresent(start -> {
+              /*      fileLocation.getStartLine().ifPresent(start -> {
                         Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
                                 Location.PhysicalLocation.Region.builder().startLine(start);
 
                         fileLocation.getEndLine().ifPresent(regionBuilder::endLine);
 
                         physicalLocationBuilder.region(regionBuilder.build());
-                    });
+                    }); */
                     Location location = locationBuilder
                             .physicalLocation(physicalLocationBuilder.build())
                             .build();
@@ -157,5 +157,5 @@ public class SarifReportPlugin implements ReportPlugin {
             }
         }
         return empty();
-    } */
+    }
 }

@@ -29,7 +29,7 @@ public class SarifResult {
 
     }
 
-    // @Singular private List<Location> locations;
+     @Singular private List<Location> locations;
 
     private SarifProperties properties;
 
