@@ -141,14 +141,14 @@ public class SarifReportPlugin implements ReportPlugin {
 
                 //    FileLocation fileLocation = (FileLocation) sourceLocation;
 
-                /*    fileLocation.getStartLine().ifPresent(start -> {
+                //    fileLocation.getStartLine().ifPresent(start -> {
                         Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
-                                Location.PhysicalLocation.Region.builder().startLine(start);
+                                Location.PhysicalLocation.Region.builder().startLine(1).endLine(1);
 
-                        fileLocation.getEndLine().ifPresent(regionBuilder::endLine);
+                //        fileLocation.getEndLine().ifPresent(regionBuilder::endLine);
 
                         physicalLocationBuilder.region(regionBuilder.build());
-                    }); */
+                //    });
                     Location location = locationBuilder
                             .physicalLocation(physicalLocationBuilder.build())
                             .build();
