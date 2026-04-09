@@ -2,10 +2,7 @@ package org.jqassistant.plugin.sarif.report.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -102,20 +99,30 @@ public class SarifReportPlugin implements ReportPlugin {
                 .ruleId(row.getKey());
 
         StringBuilder description = new StringBuilder(constraint.getDescription());
-        String columnsValues = row.getColumns()
-                .entrySet()
-                .stream()
-                .map(entry -> entry.getKey() + ": '" + entry.getValue()
-                        .getLabel() + "'")
-                .collect(joining(" | "));
 
-        String additionalValues = "";
-        if (!columnsValues.isEmpty()) {
-            additionalValues =columnsValues;
+        Map<String, ?> columns = row.getColumns();
+        List<String> header = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+
+        String line = "| :--- | :--- | :--- |";
+        String message = description + " | ";
+
+        row.getColumns().forEach((key, value) -> {
+            header.add(key);
+            values.add(value.getLabel());
+        });
+
+
+        header.add("Location of Failure");
+        values.add(getPath(result, row).orElse("Location Not Found"));
+
+
+
+        String markdown ="### " + description + "\n\n | " + String.join(" | ", header) + " | " + "\n" + line + "\n" + " | " + String.join(" | ", values);
+
+        for (int i = 0; i < header.size(); i++) {
+            message = message + header.get(i) + "='" + values.get(i) + "'";
         }
-
-        String markdown = "| " + description + " | " + additionalValues + " | **Location of Failure:** " + getPath(result, row).orElse("Not Found");
-        String message = description + " | " + additionalValues + " | Location of Failure: " + getPath(result, row).orElse("Not Found");
 
         resultBuilder.message(SarifResult.Message.builder().text(message).markdown(markdown).build());
         getLocation(result, row).ifPresent(resultBuilder::location);
