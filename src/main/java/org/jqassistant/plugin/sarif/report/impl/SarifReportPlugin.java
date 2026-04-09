@@ -101,7 +101,6 @@ public class SarifReportPlugin implements ReportPlugin {
         List<String> header = new ArrayList<>();
         List<String> values = new ArrayList<>();
         String line = "| :--- | :--- | :--- |";
-        String message = description + " | ";
         row.getColumns().forEach((key, value) -> {
             header.add(key);
             values.add(value.getLabel());
@@ -109,11 +108,12 @@ public class SarifReportPlugin implements ReportPlugin {
 
         header.add("Location of Failure");
         values.add(getPath(result, row).orElse("Location Not Found"));
-        for (int i = 0; i < header.size(); i++) {
-            message = message + header.get(i) + "='" + values.get(i) + "',";
+        String message = description + " | " + header.get(0) + "='" + values.get(0) + "'";
+        for (int i = 1; i < header.size(); i++) {
+            message = message + ", " + header.get(i) + "='" + values.get(i) + "'";
         }
 
-        String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values);
+        String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values) + " |";
         resultBuilder.message(SarifResult.Message.builder().text(message).markdown(markdown).build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
