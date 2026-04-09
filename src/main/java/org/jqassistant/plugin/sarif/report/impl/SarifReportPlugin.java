@@ -116,8 +116,6 @@ public class SarifReportPlugin implements ReportPlugin {
         header.add("Location of Failure");
         values.add(getPath(result, row).orElse("Location Not Found"));
 
-
-
         String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values);
 
         for (int i = 0; i < header.size(); i++) {
