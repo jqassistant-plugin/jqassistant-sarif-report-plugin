@@ -118,7 +118,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
 
 
-        String markdown ="### " + description + "\n\n | " + String.join(" | ", header) + " | " + "\n" + line + "\n" + " | " + String.join(" | ", values);
+        String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values);
 
         for (int i = 0; i < header.size(); i++) {
             message = message + header.get(i) + "='" + values.get(i) + "'";

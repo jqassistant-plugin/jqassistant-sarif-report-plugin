@@ -12,7 +12,7 @@
       "level" : "error",
       "message" : {
         "text" : "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues'Member='java.lang.String issueField'Location of Failure='/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java'",
-        "markdown" : "### A failing constraint\n\n | Type | Member | Location of Failure | \n| :--- | :--- | :--- |\n | org.jqassistant.plugin.sarif.report.it.TypeWithIssues | java.lang.String issueField | /org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+        "markdown" : "### A failing constraint\n\n| Type | Member | Location of Failure |\n| :--- | :--- | :--- |\n| org.jqassistant.plugin.sarif.report.it.TypeWithIssues | java.lang.String issueField | /org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
       },
       "locations" : [ {
         "physicalLocation" : {
@@ -34,7 +34,7 @@
       "level" : "error",
       "message" : {
         "text" : "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues'Member='void issueMethod()'Location of Failure='/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java'",
-        "markdown" : "### A failing constraint\n\n | Type | Member | Location of Failure | \n| :--- | :--- | :--- |\n | org.jqassistant.plugin.sarif.report.it.TypeWithIssues | void issueMethod() | /org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+        "markdown" : "### A failing constraint\n\n| Type | Member | Location of Failure |\n| :--- | :--- | :--- |\n| org.jqassistant.plugin.sarif.report.it.TypeWithIssues | void issueMethod() | /org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
       },
       "locations" : [ {
         "physicalLocation" : {
