@@ -98,46 +98,29 @@ public class SarifReportPlugin implements ReportPlugin {
                 .ruleId(row.getKey());
 
         StringBuilder description = new StringBuilder(constraint.getDescription());
-
         List<String> header = new ArrayList<>();
         List<String> values = new ArrayList<>();
-
         String line = "| :--- | :--- | :--- |";
         String message = description + " | ";
-
         row.getColumns().forEach((key, value) -> {
             header.add(key);
             values.add(value.getLabel());
         });
 
-
         header.add("Location of Failure");
         values.add(getPath(result, row).orElse("Location Not Found"));
-
-        String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values);
-
         for (int i = 0; i < header.size(); i++) {
-            message = message + header.get(i) + "='" + values.get(i) + "'";
+            message = message + header.get(i) + "='" + values.get(i) + "',";
         }
 
+        String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values);
         resultBuilder.message(SarifResult.Message.builder().text(message).markdown(markdown).build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 
      private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
-        //replace with getPath()
-        Optional<String> primaryColumnName = result.getPrimaryColumn();
-        if (primaryColumnName.isPresent()) {
-            Column<?> column = row.getColumns()
-                    .get(primaryColumnName.get());
-            Optional<SourceLocation<?>> optionalSourceLocation = column.getSourceLocation();
-
-            if (optionalSourceLocation.isPresent()) {
-
-                SourceLocation<?> sourceLocation = optionalSourceLocation.get();
-                if (sourceLocation instanceof FileLocation) {
-        //replace with getPath()
+        // if uri bug in jQA is fixed getPath() might be integrated here (therefore input parameters)
                     Location.LocationBuilder locationBuilder = Location.builder();
                     Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
                     physicalLocationBuilder.artifactLocation(
@@ -145,26 +128,15 @@ public class SarifReportPlugin implements ReportPlugin {
                                     .uri(".jqassistant.yml")
                                     .build()
                     );
-
-                //    FileLocation fileLocation = (FileLocation) sourceLocation;
-
-                //    fileLocation.getStartLine().ifPresent(start -> {
-                        Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
-                                Location.PhysicalLocation.Region.builder().startLine(1).endLine(1);
-
-                //        fileLocation.getEndLine().ifPresent(regionBuilder::endLine);
-
-                        physicalLocationBuilder.region(regionBuilder.build());
-                //    });
+                    Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
+                            Location.PhysicalLocation.Region.builder().startLine(1).endLine(1);
+                    physicalLocationBuilder.region(regionBuilder.build());
                     Location location = locationBuilder
                             .physicalLocation(physicalLocationBuilder.build())
                             .build();
                     return Optional.of(location);
-                }
-            }
-        }
-        return empty();
     }
+
      private Optional<String> getPath (Result<? extends ExecutableRule> result, Row row) {
          Optional<String> primaryColumnName = result.getPrimaryColumn();
          if (primaryColumnName.isPresent()) {

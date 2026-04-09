@@ -1,6 +1,5 @@
 package org.jqassistant.plugin.sarif.report.api.impl.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -27,31 +27,3 @@ jobs:
       ossrh_signing_key: ${{ secrets.OSSRH_SIGNING_KEY }}
       ossrh_signing_password: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
-
-  sarifReportIT:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Run Test
-        run: mvn test -Dtest=SarifReportIT
-      - name: publish SARIF
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'
-          category: "jQAssistant"
-      - name: Inspect Sarif Content
-        run: |
-          RESULTS_COUNT=$(jq '.runs[].results | length' target/jqassistant/report/sarif/jqassistant-sarif-report.json)
-          echo "Found $RESULTS_COUNT violations in SARIF file."
-          if [ "$RESULTS_COUNT" -gt 0 ]; then
-            jq '.runs[].results[0]' target/jqassistant/report/sarif/jqassistant-sarif-report.json
-          fi
