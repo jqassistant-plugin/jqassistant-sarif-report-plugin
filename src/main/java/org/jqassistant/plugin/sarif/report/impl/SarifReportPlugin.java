@@ -105,16 +105,19 @@ public class SarifReportPlugin implements ReportPlugin {
         String columnsValues = row.getColumns()
                 .entrySet()
                 .stream()
-                .map(entry -> entry.getKey() + "='" + entry.getValue()
+                .map(entry -> entry.getKey() + ": '" + entry.getValue()
                         .getLabel() + "'")
-                .collect(joining(", "));
+                .collect(joining(" | "));
 
+        String additionalValues = "";
         if (!columnsValues.isEmpty()) {
-            description.append(" | ")
-                    .append(columnsValues);
+            additionalValues =columnsValues;
         }
-        String message = description.toString() + " | " + "Failure at: " + getPath(result, row).orElse("");
-        resultBuilder.message(SarifResult.Message.builder().text(message).build());
+
+        String markdown = "| " + description + " | " + additionalValues + " | **Location of Failure:** " + getPath(result, row).orElse("Not Found");
+        String message = description + " | " + additionalValues + " | Location of Failure: " + getPath(result, row).orElse("Not Found");
+
+        resultBuilder.message(SarifResult.Message.builder().text(message).markdown(markdown).build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }

@@ -20,7 +20,7 @@
 
     <constraint id="sarif-report-it:ConstraintWithWarnings" severity="minor">
         <requiresParameter name="fqn" type="String"/>
-        <description>A failing Constraint</description>
+        <description>A failing constraint</description>
         <cypher><![CDATA[
         MATCH
           (t:Type{fqn: $fqn})-[:DECLARES]->(m:Member)

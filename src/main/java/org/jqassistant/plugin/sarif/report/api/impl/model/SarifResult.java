@@ -26,6 +26,7 @@ public class SarifResult {
     public static class Message {
 
         private String text;
+        private String markdown;
 
     }
 
