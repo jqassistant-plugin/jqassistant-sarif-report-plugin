@@ -28,7 +28,6 @@ import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAIL
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.WARNING;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.Optional.empty;
-import static java.util.stream.Collectors.joining;
 
 @Default
 @Slf4j
@@ -100,7 +99,6 @@ public class SarifReportPlugin implements ReportPlugin {
 
         StringBuilder description = new StringBuilder(constraint.getDescription());
 
-        Map<String, ?> columns = row.getColumns();
         List<String> header = new ArrayList<>();
         List<String> values = new ArrayList<>();
 
