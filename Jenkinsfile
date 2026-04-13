@@ -8,7 +8,8 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'mvn verify -Dit.test=SarifReportIT'
+                sh 'mvn verify jqassistant:report -Dit.test=SarifReportIT'
+                sh 'find target -name "*.json" || true'
             }
         }
 
