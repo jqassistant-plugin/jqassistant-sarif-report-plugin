@@ -23,7 +23,4 @@ public class SarifReport {
 
     private List<Run> runs;
 
-
-
-
 }

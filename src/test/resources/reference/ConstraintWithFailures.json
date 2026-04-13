@@ -1,56 +1,65 @@
 {
-  "$schema" : "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
-  "version" : "2.1.0",
-  "runs" : [ {
-    "tool" : {
-      "driver" : {
-        "name" : "jQAssistant"
-      }
-    },
-    "results" : [ {
-      "ruleId" : "963605dfa33350b405dd9c23176f3ae21915e1c48dc9f27a02b267ba1dd3e4a0",
-      "level" : "error",
-      "message" : {
-        "text" : "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField', Location of Failure='/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java'",
-        "markdown" : "### A failing constraint\n\n| Type | Member | Location of Failure |\n| :--- | :--- | :--- |\n| org.jqassistant.plugin.sarif.report.it.TypeWithIssues | java.lang.String issueField | /org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java |"
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "jQAssistant"
+        }
       },
-      "locations" : [ {
-        "physicalLocation" : {
-          "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
+      "results": [
+        {
+          "ruleId": "963605dfa33350b405dd9c23176f3ae21915e1c48dc9f27a02b267ba1dd3e4a0",
+          "level": "error",
+          "message": {
+            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'",
+            "markdown": "### A failing constraint\n\n| Type | Member |\n| :--- | :--- | :--- |\n| org.jqassistant.plugin.sarif.report.it.TypeWithIssues | java.lang.String issueField |"
           },
-          "region" : {
-            "startLine" : 1,
-            "endLine" : 1
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".jqassistant.yml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+          }
+        },
+        {
+          "ruleId": "34ec8c5e344bc48a850d42b170318b63e6157b9071510d6a7a77887295e27cbb",
+          "level": "error",
+          "message": {
+            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'",
+            "markdown": "### A failing constraint\n\n| Type | Member |\n| :--- | :--- | :--- |\n| org.jqassistant.plugin.sarif.report.it.TypeWithIssues | void issueMethod() |"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".jqassistant.yml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
           }
         }
-      } ],
-      "properties" : {
-        "type" : "issue",
-        "check_name" : "[jQAssistant]sarif-report-it:ConstraintWithFailures"
-      }
-    }, {
-      "ruleId" : "34ec8c5e344bc48a850d42b170318b63e6157b9071510d6a7a77887295e27cbb",
-      "level" : "error",
-      "message" : {
-        "text" : "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()', Location of Failure='/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java'",
-        "markdown" : "### A failing constraint\n\n| Type | Member | Location of Failure |\n| :--- | :--- | :--- |\n| org.jqassistant.plugin.sarif.report.it.TypeWithIssues | void issueMethod() | /org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java |"
-      },
-      "locations" : [ {
-        "physicalLocation" : {
-          "artifactLocation" : {
-            "uri" : ".jqassistant.yml"
-          },
-          "region" : {
-            "startLine" : 1,
-            "endLine" : 1
-          }
-        }
-      } ],
-      "properties" : {
-        "type" : "issue",
-        "check_name" : "[jQAssistant]sarif-report-it:ConstraintWithFailures"
-      }
-    } ]
-  } ]
+      ]
+    }
+  ]
 }

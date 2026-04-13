@@ -51,7 +51,9 @@ public class SarifReportPlugin implements ReportPlugin {
     }
 
     @Override
-    public void begin() { results = new LinkedList<>(); }
+    public void begin() {
+        results = new LinkedList<>();
+    }
 
     @Override
     public void setResult(Result<? extends ExecutableRule> result) {
@@ -73,19 +75,19 @@ public class SarifReportPlugin implements ReportPlugin {
         File reportDirectory = reportContext.getReportDirectory(REPORT_DIRECTORY);
 
         SarifReport report = SarifReport.builder()
-                .runs(List.of(
-                        Run.builder()
-                                .tool(Run.Tool.builder()
-                                        .driver(Run.Tool.Driver.builder().build())
-                                .build())
-                                .results(this.results)
-                        .build()
-                )).build();
+            .runs(List.of(Run.builder()
+                .tool(Run.Tool.builder()
+                    .driver(Run.Tool.Driver.builder()
+                        .build())
+                    .build())
+                .results(this.results)
+                .build()))
+            .build();
         try {
             File file = new File(reportDirectory, REPORT_FILE).getCanonicalFile();
             log.info("Writing SARIF report to {}.", file);
             OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                    .writeValue(file, report);
+                .writeValue(file, report);
         } catch (IOException e) {
             throw new ReportException("Failed to write SARIF report file.", e);
         }
@@ -93,61 +95,71 @@ public class SarifReportPlugin implements ReportPlugin {
 
     private SarifResult getResult(Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
         SarifResult.SarifResultBuilder resultBuilder = SarifResult.builder()
-                .properties(SarifResult.SarifProperties.builder().checkName("[jQAssistant]" + constraint.getId()).build())
-                .level(SEVERITY_MAPPER.toReport(constraint.getSeverity()))
-                .ruleId(row.getKey());
+            .properties(SarifResult.SarifProperties.builder()
+                .checkName("[jQAssistant]" + constraint.getId())
+                .build())
+            .level(SEVERITY_MAPPER.toReport(constraint.getSeverity()))
+            .ruleId(row.getKey());
 
         StringBuilder description = new StringBuilder(constraint.getDescription());
-        List<String> header = new ArrayList<>();
-        List<String> values = new ArrayList<>();
-        String line = "| :--- | :--- | :--- |";
-        row.getColumns().forEach((key, value) -> {
-            header.add(key);
-            values.add(value.getLabel());
-        });
+        ArrayList<String> header = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
 
-        header.add("Location of Failure");
-        values.add(getPath(result, row).orElse("Location Not Found"));
-        String message = description + " | " + header.get(0) + "='" + values.get(0) + "'";
+        row.getColumns()
+            .forEach((key, value) -> {
+                header.add(key);
+                values.add(value.getLabel());
+            });
+
+        StringBuilder message = new StringBuilder(description + " | " + header.get(0) + "='" + values.get(0) + "'");
         for (int i = 1; i < header.size(); i++) {
-            message = message + ", " + header.get(i) + "='" + values.get(i) + "'";
+            message.append(", ")
+                .append(header.get(i))
+                .append("='")
+                .append(values.get(i))
+                .append("'");
         }
 
-        String markdown ="### " + description + "\n\n| " + String.join(" | ", header) + " |" + "\n" + line + "\n" + "| " + String.join(" | ", values) + " |";
-        resultBuilder.message(SarifResult.Message.builder().text(message).markdown(markdown).build());
+        resultBuilder.message(SarifResult.Message.builder()
+            .text(message.toString())
+            .markdown(generateMarkdown(description.toString(), header, values))
+            .build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 
-     private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
+    private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
         // if uri bug in jQA is fixed getPath() might be integrated here (therefore input parameters)
-                    Location.LocationBuilder locationBuilder = Location.builder();
-                    Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
-                    physicalLocationBuilder.artifactLocation(
-                            Location.PhysicalLocation.ArtifactLocation.builder()
-                                    .uri(".jqassistant.yml")
-                                    .build()
-                    );
-                    Location.PhysicalLocation.Region.RegionBuilder regionBuilder =
-                            Location.PhysicalLocation.Region.builder().startLine(1).endLine(1);
-                    physicalLocationBuilder.region(regionBuilder.build());
-                    Location location = locationBuilder
-                            .physicalLocation(physicalLocationBuilder.build())
-                            .build();
-                    return Optional.of(location);
+        Location.LocationBuilder locationBuilder = Location.builder();
+        Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
+        physicalLocationBuilder.artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
+            .uri(".jqassistant.yml")
+            .build());
+        Location.PhysicalLocation.Region.RegionBuilder regionBuilder = Location.PhysicalLocation.Region.builder()
+            .startLine(1)
+            .endLine(1);
+        physicalLocationBuilder.region(regionBuilder.build());
+        Location location = locationBuilder.physicalLocation(physicalLocationBuilder.build())
+            .build();
+        return Optional.of(location);
     }
 
-     private Optional<String> getPath (Result<? extends ExecutableRule> result, Row row) {
-         Optional<String> primaryColumnName = result.getPrimaryColumn();
-         if (primaryColumnName.isPresent()) {
-             Column<?> column = row.getColumns()
-                     .get(primaryColumnName.get());
-             Optional<SourceLocation<?>> optionalSourceLocation = column.getSourceLocation();
-             if (optionalSourceLocation.isPresent() && optionalSourceLocation.get() instanceof FileLocation) {
-                 String path = optionalSourceLocation.get().getFileName();
-                 return Optional.of(path);
-             }
-         }
-         return empty();
-     }
+    private Optional<String> getPath(Result<? extends ExecutableRule> result, Row row) {
+        Optional<String> primaryColumnName = result.getPrimaryColumn();
+        if (primaryColumnName.isPresent()) {
+            Column<?> column = row.getColumns()
+                .get(primaryColumnName.get());
+            Optional<SourceLocation<?>> optionalSourceLocation = column.getSourceLocation();
+            if (optionalSourceLocation.isPresent() && optionalSourceLocation.get() instanceof FileLocation) {
+                String path = optionalSourceLocation.get()
+                    .getFileName();
+                return Optional.of(path);
+            }
+        }
+        return empty();
+    }
+
+    private String generateMarkdown(String description, ArrayList<String> header, ArrayList<String> values) {
+        return "### " + description + "\n\n| " + String.join(" | ", header) + " |\n| :--- | :--- | :--- |\n| " + String.join(" | ", values) + " |";
+    }
 }
