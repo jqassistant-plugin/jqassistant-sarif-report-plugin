@@ -8,14 +8,14 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'mvn verify jqassistant:report -Dit.test=SarifReportIT'
-                sh 'find target -name "*.json" || true'
+                sh 'mvn clean verify -Dtest=SarifReportIT'
+                sh 'find target -name "jqassistant-sarif-report.json"'
             }
         }
 
         stage('Archive Results') {
             steps {
-                archiveArtifacts artifacts: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json',
+                archiveArtifacts artifacts: '**/jqassistant-sarif-report.json',
                                  fingerprint: true,
                                  onlyIfSuccessful: true
             }
