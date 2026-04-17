@@ -20,6 +20,9 @@ pipeline {
              recordIssues(
                 tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
             )
+            recordIssues(
+                tool: sarif(pattern: 'src/test/resources/markdown-trial.json')
+            )
         }
     }
 }
