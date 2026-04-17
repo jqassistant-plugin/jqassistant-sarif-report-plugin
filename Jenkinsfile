@@ -13,13 +13,11 @@ pipeline {
                                  onlyIfSuccessful: true
             }
         }
-    }
-
-    post {
-        always {
-             recordIssues(
-                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
-            )
+        stage('Record Report') {
+            steps {
+                sh "sed -i 's/\\\\n/<br>/g' target/reports/jqassistant.sarif"
+                recordIssues tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
+            }
         }
     }
 }
