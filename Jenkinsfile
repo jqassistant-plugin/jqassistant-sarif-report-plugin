@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Record Report') {
             steps {
-                sh "sed -i 's/\\\\n/<br>/g' target/reports/jqassistant.sarif"
+                sh "sed -i 's/\\\\n/<br>/g' src/test/resources/reference/ConstraintWithFailures.json"
                 recordIssues tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
             }
         }
