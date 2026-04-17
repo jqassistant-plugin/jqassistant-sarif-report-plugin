@@ -23,8 +23,10 @@ pipeline {
     }
 
     post {
+        always {
              recordIssues(
                 tool: sarif(pattern: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json')
             )
+        }
     }
 }
