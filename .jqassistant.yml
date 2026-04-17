@@ -1,1 +1,10 @@
 # only to address sarif report
+jqassistant:
+  analyze:
+    report:
+      properties:
+        sarif:
+          report:
+            message:
+              text: title
+              markdown: details
