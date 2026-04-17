@@ -13,8 +13,7 @@
           "ruleId": "963605dfa33350b405dd9c23176f3ae21915e1c48dc9f27a02b267ba1dd3e4a0",
           "level": "error",
           "message": {
-            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'",
-            "markdown": "__A failing constraint__\n| Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n | Member: java.lang.String issueField"
+            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'"
           },
           "locations": [
             {
@@ -38,8 +37,7 @@
           "ruleId": "34ec8c5e344bc48a850d42b170318b63e6157b9071510d6a7a77887295e27cbb",
           "level": "error",
           "message": {
-            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'",
-            "markdown": "A failing constraint\n| Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n | Member: void issueMethod()"
+            "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='void issueMethod()'"
           },
           "locations": [
             {
