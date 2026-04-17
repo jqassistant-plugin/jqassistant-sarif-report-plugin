@@ -18,7 +18,7 @@ pipeline {
     post {
         always {
              recordIssues(
-                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures')
+                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
             )
         }
     }
