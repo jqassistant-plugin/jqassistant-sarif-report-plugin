@@ -160,6 +160,6 @@ public class SarifReportPlugin implements ReportPlugin {
     }
 
     private String generateMarkdown(String description, ArrayList<String> header, ArrayList<String> values) {
-        return "### " + description + "\n\n| " + String.join(" | ", header) + " |\n| :--- | :--- | :--- |\n| " + String.join(" | ", values) + " |";
+        return "### " + description + "\n\n| " + String.join(" | ", header) + " |\n| :--- | :--- |\n| " + String.join(" | ", values) + " |";
     }
 }
