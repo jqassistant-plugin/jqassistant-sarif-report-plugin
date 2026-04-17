@@ -18,11 +18,11 @@ pipeline {
     post {
         always {
              recordIssues(
-                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
+                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json'),
                 id: 'reference report'
             )
             recordIssues(
-                tool: sarif(pattern: 'src/test/resources/markdown-trial.json')
+                tool: sarif(pattern: 'src/test/resources/markdown-trial.json'),
                 id: 'test-markdown'
             )
         }
