@@ -33,6 +33,9 @@ import static java.util.Optional.empty;
 @Slf4j
 public class SarifReportPlugin implements ReportPlugin {
 
+    private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
+    private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
+
     public static final String REPORT_DIRECTORY = "sarif";
 
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
@@ -45,9 +48,25 @@ public class SarifReportPlugin implements ReportPlugin {
 
     private List<SarifResult> results;
 
+    enum MessageContent {
+        TITLE,
+        DETAILS,
+        FULL;
+    }
+
+    private MessageContent textContent;
+
+    private MessageContent markdownContent;
+
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
         this.reportContext = reportContext;
+
+        this.textContent = MessageContent.valueOf((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name()));
+
+        this.markdownContent = MessageContent.valueOf((String) properties.get(PROPERTY_MARKDOWN_DATA));
+
+
     }
 
     @Override
@@ -104,25 +123,29 @@ public class SarifReportPlugin implements ReportPlugin {
         StringBuilder description = new StringBuilder(constraint.getDescription());
         ArrayList<String> header = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>();
-
         row.getColumns()
             .forEach((key, value) -> {
                 header.add(key);
                 values.add(value.getLabel());
             });
+        String text;
+        String markdown = null;
 
-        StringBuilder message = new StringBuilder(description + " | " + header.get(0) + "='" + values.get(0) + "'");
-        for (int i = 1; i < header.size(); i++) {
-            message.append(", ")
-                .append(header.get(i))
-                .append("='")
-                .append(values.get(i))
-                .append("'");
+        switch (this.textContent) {
+        case TITLE:
+            text = description.toString();
+            if (this.markdownContent == MessageContent.DETAILS) {
+                markdown = getMessage(description, header, values, "\n", true);
+            }
+            break;
+        default:
+            text = getMessage(description, header, values, " ", false);
+            markdown = getMessage(description, header, values, "\n", false);
         }
 
         resultBuilder.message(SarifResult.Message.builder()
-            .text(message.toString())
-            .markdown(generateMarkdown(description.toString(), header, values))
+            .text(text)
+            .markdown(markdown)
             .build());
         getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
@@ -158,8 +181,22 @@ public class SarifReportPlugin implements ReportPlugin {
         }
         return empty();
     }
+    // filler is either " " (text) or "\n" (markdown)
+    private String getMessage(StringBuilder description, ArrayList<String> header, ArrayList<String> values, String filler, boolean details) {
+        StringBuilder result = new StringBuilder();
+        if (!details) {
+            result.append(description).append(filler);
+        }
+        for (int i = 0; i < header.size(); i++) {
+            result
+                .append("|")
+                .append(header.get(i))
+                .append(": ")
+                .append(values.get(i))
+                .append(filler);
+        }
 
-    private String generateMarkdown(String description, ArrayList<String> header, ArrayList<String> values) {
-        return "# " + description + "\n\n| " + String.join(" | ", header) + " |\n| --- | --- |\n| " + String.join(" | ", values) + " |";
+        return result.toString();
     }
+
 }
