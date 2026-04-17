@@ -13,11 +13,13 @@ pipeline {
                                  onlyIfSuccessful: true
             }
         }
-        stage('Record Report') {
-            steps {
-                sh "sed -i 's/\\\\n/<br>/g' src/test/resources/reference/ConstraintWithFailures.json"
-                recordIssues tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
-            }
+    }
+
+    post {
+        always {
+             recordIssues(
+                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json')
+            )
         }
     }
 }
