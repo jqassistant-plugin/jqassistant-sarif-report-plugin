@@ -14,7 +14,7 @@
           "level": "error",
           "message": {
             "text": "A failing constraint | Type='org.jqassistant.plugin.sarif.report.it.TypeWithIssues', Member='java.lang.String issueField'",
-            "markdown": "_A failing constraint_\n| Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n | Member: java.lang.String issueField"
+            "markdown": "__A failing constraint__\n| Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n | Member: java.lang.String issueField"
           },
           "locations": [
             {
