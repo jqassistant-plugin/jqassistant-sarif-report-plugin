@@ -21,4 +21,10 @@ pipeline {
             }
         }
     }
+
+    post {
+        recordIssue(
+             tool: sarif(pattern: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json')
+        )
+    }
 }
