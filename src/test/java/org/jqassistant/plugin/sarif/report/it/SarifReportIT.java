@@ -21,15 +21,6 @@ import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 
 public class SarifReportIT {
 
-    private void verify(String constraintId, String referencePath, Result.Status expectedStatus, Result<Constraint> result) throws RuleException, IOException {
-        assertThat(result.getStatus()).isEqualTo(expectedStatus);
-
-        File sarifReport = new File("target/jqassistant/report/sarif/jqassistant-sarif-report.json");
-        assertThat(sarifReport).exists();
-        String expectedJson = IOUtils.toString(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + referencePath + ".json"), UTF_8);
-        assertJson(sarifReport).isEqualTo(expectedJson);
-    }
-
     @Nested
     public class WithTextAndDetailsIT extends AbstractJavaPluginIT {
 
@@ -138,7 +129,7 @@ public class SarifReportIT {
             scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
 
-            verify("ConstraintWithWarnings", "TextOnly", WARNING, result);
+            verify("ConstraintWithWarnings", "Full", WARNING, result);
         }
 
         @Test
@@ -146,8 +137,17 @@ public class SarifReportIT {
             scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
 
-            verify("ConstraintWithFailures", "TextOnly", FAILURE, result);
+            verify("ConstraintWithFailures", "Full", FAILURE, result);
         }
 
+    }
+
+    private void verify(String constraintId, String referencePath, Result.Status expectedStatus, Result<Constraint> result) throws IOException {
+        assertThat(result.getStatus()).isEqualTo(expectedStatus);
+
+        File sarifReport = new File("target/jqassistant/report/sarif/jqassistant-sarif-report.json");
+        assertThat(sarifReport).exists();
+        String expectedJson = IOUtils.toString(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + referencePath + ".json"), UTF_8);
+        assertJson(sarifReport).isEqualTo(expectedJson);
     }
 }

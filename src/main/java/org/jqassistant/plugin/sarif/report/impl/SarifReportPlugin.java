@@ -58,7 +58,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
         this.textContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name())).toUpperCase());
 
-        this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.NONE.name())).toUpperCase());
+        this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.FULL.name())).toUpperCase());
 
     }
 
@@ -165,34 +165,34 @@ public class SarifReportPlugin implements ReportPlugin {
     enum MessageContent {
         TITLE {
             @Override
-            String toText(ExecutableRule<?> rule, Row row, String filler) {
-                return rule.getDescription();
+            String toText(Constraint constraint, Row row, String separatingCharacter) {
+                return constraint.getDescription();
             }
         },
         DETAILS {
             @Override
-            String toText(ExecutableRule<?> rule, Row row, String filler) {
-                return formatColumns(null, row, filler);
+            String toText(Constraint constraint, Row row, String separatingCharacter) {
+                return formatColumns(null, row, separatingCharacter);
             }
         },
         NONE {
             @Override
-            String toText(ExecutableRule<?> rule, Row row, String filler) {
+            String toText(Constraint constraint, Row row, String separatingCharacter) {
                 return null;
             }
         },
         FULL {
             @Override
-            String toText(ExecutableRule<?> rule, Row row, String filler) {
-                return formatColumns(rule.getDescription(), row, filler);
+            String toText(Constraint constraint, Row row, String separatingCharacter) {
+                return formatColumns(constraint.getDescription(), row, separatingCharacter);
             }
         };
 
-        protected String formatColumns(String description, Row row, String filler) {
+        protected String formatColumns(String description, Row row, String separatingCharacter) {
             StringBuilder message = new StringBuilder();
             if (description != null) {
                 message.append(description)
-                    .append(filler);
+                    .append(separatingCharacter);
             }
             row.getColumns()
                 .forEach((key, value) -> {
@@ -201,13 +201,13 @@ public class SarifReportPlugin implements ReportPlugin {
                             .append(key)
                             .append(": ")
                             .append(value.getLabel())
-                            .append(filler);
+                            .append(separatingCharacter);
                     }
                 });
             return message.toString();
         }
 
-        abstract String toText(ExecutableRule<?> rule, Row row, String filler);
+        abstract String toText(Constraint constraint, Row row, String separatingCharacter);
     }
 
 }
