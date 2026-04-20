@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>jqassistant-sarif-report-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-TEST</version>
 
     <name>jQAssistant SARIF Report Plugin</name>
     <description>Reports jQAssistant failures as SARIF reports for publishing them to other tools, e.g. SonarQube or GitHub.</description>
