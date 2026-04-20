@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "jQAssistant"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "963605dfa33350b405dd9c23176f3ae21915e1c48dc9f27a02b267ba1dd3e4a0",
+          "level": "error",
+          "message": {
+            "text": "[WARNING: sarif.report.message.text cannot be NONE] A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: java.lang.String issueField "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".jqassistant.yml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+          }
+        },
+        {
+          "ruleId": "34ec8c5e344bc48a850d42b170318b63e6157b9071510d6a7a77887295e27cbb",
+          "level": "error",
+          "message": {
+            "text": "[WARNING: sarif.report.message.text cannot be NONE] A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: void issueMethod() "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".jqassistant.yml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+          }
+        }
+      ]
+    }
+  ]
+}

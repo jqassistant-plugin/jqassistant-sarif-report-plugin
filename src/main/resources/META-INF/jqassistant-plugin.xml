@@ -1,5 +1,5 @@
-<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v2.4"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<jqassistant-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xmlns="http://schema.jqassistant.org/plugin/v2.4"
                     xsi:schemaLocation="http://schema.jqassistant.org/plugin/v2.4 https://jqassistant.github.io/jqassistant/current/schema/jqassistant-plugin-v2.4.xsd"
                     name="jQAssistant SARIF Report Plugin" id="jqa.plugin.sarif.report"
                     version="${project.version}">

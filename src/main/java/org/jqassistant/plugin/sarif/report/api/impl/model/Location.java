@@ -17,6 +17,7 @@ public class Location {
     public static class PhysicalLocation {
 
         private ArtifactLocation artifactLocation;
+        private Region region;
 
         @Builder
         @Getter
@@ -24,8 +25,6 @@ public class Location {
         public static class ArtifactLocation {
             private String uri;
         }
-
-        private Region region;
 
         @Builder
         @Getter

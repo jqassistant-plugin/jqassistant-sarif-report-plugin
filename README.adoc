@@ -6,13 +6,14 @@ It allows to generate JSON files in the https://docs.oasis-open.org/sarif/sarif/
 
 For more information on jQAssistant see https://jqassistant.org[^].
 
-NOTE: Despite linking of source locations is implemented by this plugin the generated links are not valid yet. This requires a https://github.com/jQAssistant/jqassistant/issues/1077[change in jQAssistant] which is scheduled for one of the next releases.
+NOTE: Despite linking of source locations is implemented by this plugin the generated links are not valid yet.
+This requires a https://github.com/jQAssistant/jqassistant/issues/1077[change in jQAssistant] which is scheduled for one of the next releases.
 
 == Setup
 
 The plugin must be declared in the jQAssistant configuration:
 
-[source, yaml]
+[source,yaml]
 ..jqassistant.yml
 ----
 jqassistant:

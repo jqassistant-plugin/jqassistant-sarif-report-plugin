@@ -10,11 +10,11 @@
       },
       "results": [
         {
-          "ruleId": "963605dfa33350b405dd9c23176f3ae21915e1c48dc9f27a02b267ba1dd3e4a0",
-          "level": "error",
-          "message" : {
-            "text" : "A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: java.lang.String issueField ",
-            "markdown" : "A failing constraint\n|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: java.lang.String issueField\n"
+          "ruleId": "cb9cf8a2441ba5e90d706b268e9e7f2e8fb4500c03b7945c777d5d8f35e7e8d8",
+          "level": "warning",
+          "message": {
+            "text": "A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: java.lang.String issueField ",
+            "markdown": "A failing constraint\n|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: java.lang.String issueField\n"
           },
           "locations": [
             {
@@ -31,15 +31,15 @@
           ],
           "properties": {
             "type": "issue",
-            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
           }
         },
         {
-          "ruleId": "34ec8c5e344bc48a850d42b170318b63e6157b9071510d6a7a77887295e27cbb",
-          "level": "error",
-          "message" : {
-            "text" : "A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: void issueMethod() ",
-            "markdown" : "A failing constraint\n|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: void issueMethod()\n"
+          "ruleId": "73cbbe1ff0d5147b60d76df02dbc53d26306dc6b4b0107f90fa7e3d3ecec3113",
+          "level": "warning",
+          "message": {
+            "text": "A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: void issueMethod() ",
+            "markdown": "A failing constraint\n|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: void issueMethod()\n"
           },
           "locations": [
             {
@@ -56,7 +56,7 @@
           ],
           "properties": {
             "type": "issue",
-            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
           }
         }
       ]

@@ -2,7 +2,10 @@ package org.jqassistant.plugin.sarif.report.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -33,13 +36,11 @@ import static java.util.Optional.empty;
 @Slf4j
 public class SarifReportPlugin implements ReportPlugin {
 
+    public static final String REPORT_DIRECTORY = "sarif";
+    public static final String REPORT_FILE = "jqassistant-sarif-report.json";
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SarifReportPlugin.class);
     private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
     private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
-
-    public static final String REPORT_DIRECTORY = "sarif";
-
-    public static final String REPORT_FILE = "jqassistant-sarif-report.json";
-
     private static final SeverityMapper SEVERITY_MAPPER = Mappers.getMapper(SeverityMapper.class);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
@@ -47,25 +48,17 @@ public class SarifReportPlugin implements ReportPlugin {
     private ReportContext reportContext;
 
     private List<SarifResult> results;
-
-    enum MessageContent {
-        TITLE,
-        DETAILS,
-        FULL;
-    }
-
     private MessageContent textContent;
-
     private MessageContent markdownContent;
 
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
+
         this.reportContext = reportContext;
 
-        this.textContent = MessageContent.valueOf((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name()));
+        this.textContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name())).toUpperCase());
 
-        this.markdownContent = MessageContent.valueOf((String) properties.get(PROPERTY_MARKDOWN_DATA));
-
+        this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.NONE.name())).toUpperCase());
 
     }
 
@@ -120,28 +113,15 @@ public class SarifReportPlugin implements ReportPlugin {
             .level(SEVERITY_MAPPER.toReport(constraint.getSeverity()))
             .ruleId(row.getKey());
 
-        StringBuilder description = new StringBuilder(constraint.getDescription());
-        ArrayList<String> header = new ArrayList<>();
-        ArrayList<String> values = new ArrayList<>();
-        row.getColumns()
-            .forEach((key, value) -> {
-                header.add(key);
-                values.add(value.getLabel());
-            });
         String text;
-        String markdown = null;
-
-        switch (this.textContent) {
-        case TITLE:
-            text = description.toString();
-            if (this.markdownContent == MessageContent.DETAILS) {
-                markdown = getMessage(description, header, values, "\n", true);
-            }
-            break;
-        default:
-            text = getMessage(description, header, values, " ", false);
-            markdown = getMessage(description, header, values, "\n", false);
+        if (this.textContent != MessageContent.NONE) {
+            text = this.textContent.toText(constraint, row, " ");
+        } else {
+            LOGGER.warn(
+                "sarif.report.message.text NONE indicates text is assigned to NULL, but must be set due to SARIF-structure. The SARIF output will contain FULL information and additional warning");
+            text = "[WARNING: sarif.report.message.text cannot be NONE] " + MessageContent.FULL.toText(constraint, row, " ");
         }
+        String markdown = this.markdownContent.toText(constraint, row, "\n");
 
         resultBuilder.message(SarifResult.Message.builder()
             .text(text)
@@ -181,22 +161,53 @@ public class SarifReportPlugin implements ReportPlugin {
         }
         return empty();
     }
-    // filler is either " " (text) or "\n" (markdown)
-    private String getMessage(StringBuilder description, ArrayList<String> header, ArrayList<String> values, String filler, boolean details) {
-        StringBuilder result = new StringBuilder();
-        if (!details) {
-            result.append(description).append(filler);
-        }
-        for (int i = 0; i < header.size(); i++) {
-            result
-                .append("|")
-                .append(header.get(i))
-                .append(": ")
-                .append(values.get(i))
-                .append(filler);
+
+    enum MessageContent {
+        TITLE {
+            @Override
+            String toText(ExecutableRule<?> rule, Row row, String filler) {
+                return rule.getDescription();
+            }
+        },
+        DETAILS {
+            @Override
+            String toText(ExecutableRule<?> rule, Row row, String filler) {
+                return formatColumns(null, row, filler);
+            }
+        },
+        NONE {
+            @Override
+            String toText(ExecutableRule<?> rule, Row row, String filler) {
+                return null;
+            }
+        },
+        FULL {
+            @Override
+            String toText(ExecutableRule<?> rule, Row row, String filler) {
+                return formatColumns(rule.getDescription(), row, filler);
+            }
+        };
+
+        protected String formatColumns(String description, Row row, String filler) {
+            StringBuilder message = new StringBuilder();
+            if (description != null) {
+                message.append(description)
+                    .append(filler);
+            }
+            row.getColumns()
+                .forEach((key, value) -> {
+                    if (!"location".equalsIgnoreCase(key)) {
+                        message.append("|")
+                            .append(key)
+                            .append(": ")
+                            .append(value.getLabel())
+                            .append(filler);
+                    }
+                });
+            return message.toString();
         }
 
-        return result.toString();
+        abstract String toText(ExecutableRule<?> rule, Row row, String filler);
     }
 
 }
