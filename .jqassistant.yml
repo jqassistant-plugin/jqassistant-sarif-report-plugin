@@ -4,7 +4,7 @@ jqassistant:
   plugins:
     - group-id: org.jqassistant.plugin
       artifact-id: jqassistant-sarif-report-plugin
-      version: 1.0.0-SNAPSHOT
+      version: 1.0.0-M1
   analyze:
     report:
       properties:

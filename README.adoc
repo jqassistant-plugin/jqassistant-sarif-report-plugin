@@ -20,7 +20,7 @@ jqassistant:
   plugins:
     - group-id: org.jqassistant.plugin
       artifact-id: jqassistant-sarif-report-plugin
-      version: 1.0.0-SNAPSHOT
+      version: 1.0.0-M1
 ----
 
 During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
