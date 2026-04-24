@@ -18,6 +18,12 @@ pipeline {
                                  onlyIfSuccessful: true
             }
         }
+        stage('Debug File') {
+            steps {
+                // This prints the timestamp of the report file
+                sh 'ls -l target/jqassistant/report/sarif/jqassistant-sarif-report.json || echo "File not found!"'
+            }
+        }
     }
 
     post {
