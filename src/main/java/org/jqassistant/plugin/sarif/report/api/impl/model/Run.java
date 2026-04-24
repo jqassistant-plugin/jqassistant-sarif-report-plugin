@@ -28,8 +28,6 @@ public class Run {
 
             @Builder.Default
             private final String name = "jQAssistant";
-
         }
     }
-
 }

@@ -23,5 +23,4 @@ public class SarifReportPluginTest {
         ReportException exception = assertThrows(ReportException.class, () -> testPlugin.configure(testContext, Map.of("sarif.report.message.text", "NONE")));
         assertEquals("sarif.report.message.text cannot be NONE", exception.getMessage());
     }
-
 }

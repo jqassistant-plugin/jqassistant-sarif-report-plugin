@@ -32,7 +32,6 @@ public class Location {
         public static class Region {
 
             int startLine;
-
             int endLine;
         }
     }

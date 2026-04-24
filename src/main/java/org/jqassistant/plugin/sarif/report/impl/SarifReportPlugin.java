@@ -41,11 +41,9 @@ public class SarifReportPlugin implements ReportPlugin {
     private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
     private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
     private static final SeverityMapper SEVERITY_MAPPER = Mappers.getMapper(SeverityMapper.class);
-
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
 
     private ReportContext reportContext;
-
     private List<SarifResult> results;
     private MessageContent textContent;
     private MessageContent markdownContent;
@@ -61,7 +59,6 @@ public class SarifReportPlugin implements ReportPlugin {
         }
 
         this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.FULL.name())).toUpperCase());
-
     }
 
     @Override

@@ -22,5 +22,4 @@ public class SarifReport {
     private final String version = "2.1.0";
 
     private List<Run> runs;
-
 }

@@ -114,7 +114,6 @@ public class SarifReportIT {
 
             verify("ConstraintWithFailures", "Full", FAILURE, result);
         }
-
     }
 
     private void verify(String constraintId, String referencePath, Result.Status expectedStatus, Result<Constraint> result) throws IOException {

@@ -1,4 +1,10 @@
+# this file only exists to provide a hook for the SARIF-Reports
+# Example of how to integrate the plugin:
 jqassistant:
+  plugins:
+    - group-id: org.jqassistant.plugin
+      artifact-id: jqassistant-sarif-report-plugin
+      version: 1.0.0-SNAPSHOT
   analyze:
     report:
       properties:

@@ -9,5 +9,4 @@ public enum Severity {
     @JsonProperty(value = "error") MAJOR,
     @JsonProperty(value = "error") CRITICAL,
     @JsonProperty(value = "error") BLOCKER
-
 }

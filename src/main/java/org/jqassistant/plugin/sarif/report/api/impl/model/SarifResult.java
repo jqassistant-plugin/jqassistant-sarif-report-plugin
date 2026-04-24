@@ -14,10 +14,9 @@ import lombok.ToString;
 public class SarifResult {
 
     private String ruleId;
-
     private Severity level;
-
     private Message message;
+
     @Singular
     private List<Location> locations;
     private SarifProperties properties;
@@ -28,9 +27,7 @@ public class SarifResult {
     public static class Message {
 
         private String text;
-
         private String markdown;
-
     }
 
     @Builder

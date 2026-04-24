@@ -5,7 +5,5 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface SeverityMapper {
-
     Severity toReport(com.buschmais.jqassistant.core.rule.api.model.Severity severity);
-
 }
