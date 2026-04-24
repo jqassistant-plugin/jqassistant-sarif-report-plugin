@@ -38,7 +38,6 @@ public class SarifReportPlugin implements ReportPlugin {
 
     public static final String REPORT_DIRECTORY = "sarif";
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SarifReportPlugin.class);
     private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
     private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
     private static final SeverityMapper SEVERITY_MAPPER = Mappers.getMapper(SeverityMapper.class);
@@ -52,11 +51,14 @@ public class SarifReportPlugin implements ReportPlugin {
     private MessageContent markdownContent;
 
     @Override
-    public void configure(ReportContext reportContext, Map<String, Object> properties) {
+    public void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException {
 
         this.reportContext = reportContext;
 
         this.textContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name())).toUpperCase());
+        if (this.textContent == MessageContent.NONE) {
+            throw new ReportException("sarif.report.message.text cannot be NONE");
+        }
 
         this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.FULL.name())).toUpperCase());
 
@@ -113,15 +115,8 @@ public class SarifReportPlugin implements ReportPlugin {
             .level(SEVERITY_MAPPER.toReport(constraint.getSeverity()))
             .ruleId(row.getKey());
 
-        String text;
-        if (this.textContent != MessageContent.NONE) {
-            text = this.textContent.toText(constraint, row, " ");
-        } else {
-            LOGGER.warn(
-                "sarif.report.message.text NONE indicates text is assigned to NULL, but must be set due to SARIF-structure. The SARIF output will contain FULL information and additional warning");
-            text = "[WARNING: sarif.report.message.text cannot be NONE] " + MessageContent.FULL.toText(constraint, row, " ");
-        }
-        String markdown = this.markdownContent.toText(constraint, row, "\n");
+        String text = this.textContent.toMessage(constraint, row, " ");
+        String markdown = this.markdownContent.toMessage(constraint, row, "\n");
 
         resultBuilder.message(SarifResult.Message.builder()
             .text(text)
@@ -165,25 +160,25 @@ public class SarifReportPlugin implements ReportPlugin {
     enum MessageContent {
         TITLE {
             @Override
-            String toText(Constraint constraint, Row row, String separatingCharacter) {
+            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
                 return constraint.getDescription();
             }
         },
         DETAILS {
             @Override
-            String toText(Constraint constraint, Row row, String separatingCharacter) {
+            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
                 return formatColumns(null, row, separatingCharacter);
             }
         },
         NONE {
             @Override
-            String toText(Constraint constraint, Row row, String separatingCharacter) {
+            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
                 return null;
             }
         },
         FULL {
             @Override
-            String toText(Constraint constraint, Row row, String separatingCharacter) {
+            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
                 return formatColumns(constraint.getDescription(), row, separatingCharacter);
             }
         };
@@ -207,7 +202,7 @@ public class SarifReportPlugin implements ReportPlugin {
             return message.toString();
         }
 
-        abstract String toText(Constraint constraint, Row row, String separatingCharacter);
+        abstract String toMessage(Constraint constraint, Row row, String separatingCharacter);
     }
 
 }

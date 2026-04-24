@@ -97,31 +97,6 @@ public class SarifReportIT {
     }
 
     @Nested
-    public class NoneTextIT extends AbstractJavaPluginIT {
-
-        @Override
-        protected Map<String, Object> getReportProperties() {
-            return Map.of("sarif.report.message.text", "NONE", "sarif.report.message.markdown", "NONE");
-        }
-
-        @Test
-        void verifyNoneTextOnWarning() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
-            Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
-
-            verify("ConstraintWithWarnings", "NoneText", WARNING, result);
-        }
-
-        @Test
-        void verifyNoneTextOnFailure() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
-            Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
-
-            verify("ConstraintWithFailures", "NoneText", FAILURE, result);
-        }
-    }
-
-    @Nested
     public class MissingConfigToDefaultIT extends AbstractJavaPluginIT {
 
         @Test
