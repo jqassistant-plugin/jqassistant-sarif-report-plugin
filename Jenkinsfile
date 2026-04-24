@@ -9,7 +9,6 @@ pipeline {
         stage('build') {
             steps {
                 sh 'mvn clean verify'
-                sh 'mvn test -Dtest=SarifReportIT'
             }
         }
         stage('Archive Results') {
