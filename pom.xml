@@ -36,7 +36,7 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/jqassistant-plugin/jqassistant-graphml-plugin.git</connection>
+        <connection>scm:git:https://github.com/jqassistant-plugin/jqassistant-sarif-report-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/jqassistant-plugin/jqassistant-sarif-report-plugin.git</developerConnection>
         <url>https://github.com/jqassistant-plugin/jqassistant-sarif-report-plugin</url>
         <tag>HEAD</tag>
