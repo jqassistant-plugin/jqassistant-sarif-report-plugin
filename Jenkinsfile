@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'mvn test -Dtest=SarifReportIT verify'
+                sh 'mvn clean test -Dtest=SarifReportIT verify'
             }
         }
         stage('Archive Results') {
@@ -32,10 +32,6 @@ pipeline {
                 tool: sarif(pattern: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'),
                 id: 'reference-report',
                 name: 'reference-report'
-            )
-            recordIssues(
-                tool: sarif(pattern: 'src/test/resources/markdown-trial.json'),
-                id: 'test-markdown'
             )
         }
     }
