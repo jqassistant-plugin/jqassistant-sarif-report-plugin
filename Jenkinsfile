@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                echo mvn verify
+                sh 'mvn verify'
             }
         }
         stage('Archive Results') {
