@@ -9,8 +9,6 @@ pipeline {
         stage('build') {
             steps {
                 sh 'mvn clean verify'
-            }
-            steps {
                 sh 'mvn test -Dtest=SarifReportIT'
             }
         }
