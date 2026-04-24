@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "jQAssistant"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "cb9cf8a2441ba5e90d706b268e9e7f2e8fb4500c03b7945c777d5d8f35e7e8d8",
+          "level": "warning",
+          "message": {
+            "text": "A failing constraint",
+            "markdown": "|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: java.lang.String issueField\n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".jqassistant.yml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
+          }
+        },
+        {
+          "ruleId": "73cbbe1ff0d5147b60d76df02dbc53d26306dc6b4b0107f90fa7e3d3ecec3113",
+          "level": "warning",
+          "message": {
+            "text": "A failing constraint",
+            "markdown": "|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: void issueMethod()\n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".jqassistant.yml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "type": "issue",
+            "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
+          }
+        }
+      ]
+    }
+  ]
+}
