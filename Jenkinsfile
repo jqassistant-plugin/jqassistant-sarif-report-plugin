@@ -23,7 +23,7 @@ pipeline {
     post {
         always {
              recordIssues(
-                tool: sarif(pattern: 'src/test/resources/reference/ConstraintWithFailures.json'),
+                tool: sarif(pattern: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'),
                 id: 'reference-report',
                 name: 'reference-report'
             )
