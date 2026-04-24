@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Archive Results') {
             steps {
-                archiveArtifacts artifacts: '**/jqassistant-sarif-report.json',
+                archiveArtifacts artifacts: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json',
                                  fingerprint: true,
                                  onlyIfSuccessful: true
             }
