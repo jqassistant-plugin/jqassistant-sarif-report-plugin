@@ -14,7 +14,7 @@ import lombok.ToString;
 public class SarifResult {
 
     private String ruleId;
-    private Severity level;
+    private Level level;
     private Message message;
 
     @Singular

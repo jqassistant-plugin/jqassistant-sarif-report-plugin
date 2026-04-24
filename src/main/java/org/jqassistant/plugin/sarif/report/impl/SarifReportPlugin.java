@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Column;
-import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.report.api.model.source.SourceLocation;
@@ -40,11 +40,11 @@ public class SarifReportPlugin implements ReportPlugin {
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
     private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
     private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
-    private static final SeverityMapper SEVERITY_MAPPER = Mappers.getMapper(SeverityMapper.class);
+    private static final LevelMapper LEVEL_MAPPER = Mappers.getMapper(LevelMapper.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
 
     private ReportContext reportContext;
-    private List<SarifResult> results;
+    private List<SarifResult> sarifResults;
     private MessageContent textContent;
     private MessageContent markdownContent;
 
@@ -63,7 +63,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
     @Override
     public void begin() {
-        results = new LinkedList<>();
+        sarifResults = new LinkedList<>();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SarifReportPlugin implements ReportPlugin {
             Constraint constraint = (Constraint) executableRule;
             for (Row row : result.getRows()) {
                 if (!row.isHidden()) {
-                    results.add(getResult(result, constraint, row));
+                    sarifResults.add(getSarifResult(result, constraint, row));
                 }
             }
         }
@@ -91,7 +91,7 @@ public class SarifReportPlugin implements ReportPlugin {
                     .driver(Run.Tool.Driver.builder()
                         .build())
                     .build())
-                .results(this.results)
+                .results(this.sarifResults)
                 .build()))
             .build();
         try {
@@ -104,12 +104,12 @@ public class SarifReportPlugin implements ReportPlugin {
         }
     }
 
-    private SarifResult getResult(Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
+    private SarifResult getSarifResult(Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
         SarifResult.SarifResultBuilder resultBuilder = SarifResult.builder()
             .properties(SarifResult.SarifProperties.builder()
                 .checkName("[jQAssistant]" + constraint.getId())
                 .build())
-            .level(SEVERITY_MAPPER.toReport(constraint.getSeverity()))
+            .level(LEVEL_MAPPER.toReport(result.getStatus()))
             .ruleId(row.getKey());
 
         String text = this.textContent.toMessage(constraint, row, " ");
@@ -124,7 +124,8 @@ public class SarifReportPlugin implements ReportPlugin {
     }
 
     private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
-        // if uri bug in jQA is fixed getPath() might be integrated here (therefore input parameters)
+        //all findings are currently attached to .jqassistant.yml as the locations reported by jQA cannot be rendered into valid links yet.
+        //When the problem is solved 'getPath()' might be integrated here
         Location.LocationBuilder locationBuilder = Location.builder();
         Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
         physicalLocationBuilder.artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()

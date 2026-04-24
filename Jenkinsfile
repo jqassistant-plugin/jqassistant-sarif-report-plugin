@@ -6,6 +6,11 @@ pipeline {
         }
 
     stages {
+        stage('build') {
+            steps {
+                echo mvn verify
+            }
+        }
         stage('Archive Results') {
             steps {
                 archiveArtifacts artifacts: '**/jqassistant-sarif-report.json',
