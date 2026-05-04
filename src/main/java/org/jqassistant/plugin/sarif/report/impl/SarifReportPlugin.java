@@ -134,7 +134,7 @@ public class SarifReportPlugin implements ReportPlugin {
         Location.PhysicalLocation.Region.RegionBuilder regionBuilder = Location.PhysicalLocation.Region.builder()
             .startLine(1)
             .endLine(1);
-        physicalLocationBuilder.region(regionBuilder.build());
+      //  physicalLocationBuilder.region(regionBuilder.build());
         Location location = locationBuilder.physicalLocation(physicalLocationBuilder.build())
             .build();
         return Optional.of(location);
