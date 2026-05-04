@@ -3,12 +3,12 @@
   <context>
     <build>
       <name>jQAssistant SARIF Report Plugin</name>
-      <timestamp>2026-04-27T06:33:10.99Z</timestamp>
+      <timestamp>2026-05-04T15:17:45.217Z</timestamp>
       <properties></properties>
     </build>
   </context>
-  <group id="jqassistant-plugin:Default" date="2026-04-27T06:33:31">
-    <group id="jqassistant-plugin-maven:Default" date="2026-04-27T06:33:31">
+  <group id="jqassistant-plugin:Default" date="2026-05-04T15:18:31">
+    <group id="jqassistant-plugin-maven:Default" date="2026-05-04T15:18:31">
       <constraint id="jqassistant-plugin-maven:GroupId">
         <description>The groupId for jQAssistant plugin Maven projects must follow the pattern 'org.jqassistant.plugin.&lt;project&gt;'.</description>
         <verificationResult>
@@ -17,7 +17,7 @@
         </verificationResult>
         <status>success</status>
         <severity level="2">major</severity>
-        <duration>92</duration>
+        <duration>105</duration>
       </constraint>
       <concept id="jqassistant-plugin-maven:ParentProject" abstract="false">
         <description>Labels all Maven projects which declare "org.jqassistant.plugin:parent" as parent module with "Parent".</description>
@@ -41,7 +41,7 @@
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>116</duration>
+        <duration>155</duration>
       </concept>
       <constraint id="jqassistant-plugin-maven:MavenModulesMustUseParentGroupId">
         <description>All Maven projects must define the same groupId as the parent of the plugin project.</description>
@@ -51,7 +51,7 @@
         </verificationResult>
         <status>success</status>
         <severity level="2">major</severity>
-        <duration>75</duration>
+        <duration>84</duration>
         <required-concept id="jqassistant-plugin-maven:ParentProject">
           <status>success</status>
         </required-concept>
@@ -64,7 +64,7 @@
         </verificationResult>
         <status>success</status>
         <severity level="2">major</severity>
-        <duration>76</duration>
+        <duration>108</duration>
         <required-concept id="jqassistant-plugin-maven:ParentProject">
           <status>success</status>
         </required-concept>
@@ -77,7 +77,7 @@
         </verificationResult>
         <status>success</status>
         <severity level="2">major</severity>
-        <duration>92</duration>
+        <duration>111</duration>
         <required-concept id="jqassistant-plugin-maven:ParentProject">
           <status>success</status>
         </required-concept>
@@ -90,14 +90,14 @@
         </verificationResult>
         <status>success</status>
         <severity level="2">major</severity>
-        <duration>200</duration>
+        <duration>232</duration>
         <required-concept id="jqassistant-plugin-maven:ParentProject">
           <status>success</status>
         </required-concept>
       </constraint>
-      <duration>851</duration>
+      <duration>1013</duration>
     </group>
-    <group id="jqassistant-plugin-test:Default" date="2026-04-27T06:33:32">
+    <group id="jqassistant-plugin-test:Default" date="2026-05-04T15:18:32">
       <concept id="junit5:ParameterizedTestMethod" abstract="false">
         <description>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.ParameterizedTest") and
 labels them with "Test", "Parameterized", and "Junit5".</description>
@@ -107,7 +107,7 @@ labels them with "Test", "Parameterized", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>64</duration>
+        <duration>66</duration>
       </concept>
       <concept id="junit5:TestMethod" abstract="false">
         <description>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.Test") and
@@ -117,22 +117,13 @@ labels them with "Test" and "Junit5".</description>
             <column>Test</column>
           </columns>
           <rows count="9">
-            <row key="3177cfdaf126b350bdaef3cdb2bea3a9014456c7d384e3bf74545acf482495a8">
+            <row key="b01888d4a1f952b6488d1fab8edd3fc17a0e232792a5ae61e2c3a25cd3fd0c4f">
               <column name="Test">
                 <element language="Java">Method</element>
-                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="34" endLine="38">
+                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="112" endLine="116">
                   <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
                 </source>
-                <value>void verifyTitleAndDetailsOnWarning()</value>
-              </column>
-            </row>
-            <row key="48886e5d0f6884c2b9ac107caa500802f1c63e711955e43912a0246398b9e911">
-              <column name="Test">
-                <element language="Java">Method</element>
-                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="104" endLine="108">
-                  <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
-                </source>
-                <value>void verifyDefaultOnWarning()</value>
+                <value>void verifyDefaultOnFailure()</value>
               </column>
             </row>
             <row key="d8230e17959b5c03cb2ffe1c9850418dc9f23af5f8aebd86e10950239c191db0">
@@ -144,6 +135,15 @@ labels them with "Test" and "Junit5".</description>
                 <value>void verifyTextOnlyContentOnWarning()</value>
               </column>
             </row>
+            <row key="e48c543d36a9d6670b60e7641d6a4ec7f58a1d73f41c60c0149304b72b73fb06">
+              <column name="Test">
+                <element language="Java">Method</element>
+                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="67" endLine="71">
+                  <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
+                </source>
+                <value>void verifyFullContentOnFailure()</value>
+              </column>
+            </row>
             <row key="539a4f99e90caa50bce374d68e391fd4dd780242aa0fff75afacdaa4f8cc722c">
               <column name="Test">
                 <element language="Java">Method</element>
@@ -153,13 +153,13 @@ labels them with "Test" and "Junit5".</description>
                 <value>void verifyTitleAndDetailsOnFailure()</value>
               </column>
             </row>
-            <row key="b01888d4a1f952b6488d1fab8edd3fc17a0e232792a5ae61e2c3a25cd3fd0c4f">
+            <row key="3177cfdaf126b350bdaef3cdb2bea3a9014456c7d384e3bf74545acf482495a8">
               <column name="Test">
                 <element language="Java">Method</element>
-                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="112" endLine="116">
+                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="34" endLine="38">
                   <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
                 </source>
-                <value>void verifyDefaultOnFailure()</value>
+                <value>void verifyTitleAndDetailsOnWarning()</value>
               </column>
             </row>
             <row key="6567559013c5bfdc5641c2996d0113e412a98a676cb60a6bd22d7ad1ccce3923">
@@ -171,22 +171,13 @@ labels them with "Test" and "Junit5".</description>
                 <value>void verifyTextOnlyContentOnFailure()</value>
               </column>
             </row>
-            <row key="8503a3aedf67bf84b36b021a1176cd15bab8b87c62c559d5cdf34086923bccaf">
+            <row key="48886e5d0f6884c2b9ac107caa500802f1c63e711955e43912a0246398b9e911">
               <column name="Test">
                 <element language="Java">Method</element>
-                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportPluginTest.java" startLine="23" endLine="25">
+                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="104" endLine="108">
                   <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
                 </source>
-                <value>void configuredTextContentMustNotBeNone()</value>
-              </column>
-            </row>
-            <row key="e48c543d36a9d6670b60e7641d6a4ec7f58a1d73f41c60c0149304b72b73fb06">
-              <column name="Test">
-                <element language="Java">Method</element>
-                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportIT.java" startLine="67" endLine="71">
-                  <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
-                </source>
-                <value>void verifyFullContentOnFailure()</value>
+                <value>void verifyDefaultOnWarning()</value>
               </column>
             </row>
             <row key="490775831357a36a32623b7ed00bcb1ac82db82df68824d2e414c6000a26f95e">
@@ -198,6 +189,15 @@ labels them with "Test" and "Junit5".</description>
                 <value>void verifyFullContentOnWarning()</value>
               </column>
             </row>
+            <row key="8503a3aedf67bf84b36b021a1176cd15bab8b87c62c559d5cdf34086923bccaf">
+              <column name="Test">
+                <element language="Java">Method</element>
+                <source fileName="/org/jqassistant/plugin/sarif/report/it/SarifReportPluginTest.java" startLine="23" endLine="25">
+                  <parent fileName="/home/runner/.m2/repository/org/jqassistant/plugin/jqassistant-sarif-report-plugin/1.0.0-SNAPSHOT/jqassistant-sarif-report-plugin-1.0.0-SNAPSHOT-tests.test-jar" group="org.jqassistant.plugin" name="jqassistant-sarif-report-plugin" type="test-jar" version="1.0.0-SNAPSHOT" classifier="tests"></parent>
+                </source>
+                <value>void configuredTextContentMustNotBeNone()</value>
+              </column>
+            </row>
           </rows>
         </result>
         <verificationResult>
@@ -206,7 +206,7 @@ labels them with "Test" and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>96</duration>
+        <duration>87</duration>
       </concept>
       <concept id="junit5:TestTemplateMethod" abstract="false">
         <description>Labels all methods annotated by "@org.junit.jupiter.api.TestTemplate"
@@ -217,7 +217,7 @@ with "Junit5", "Test" and "Template".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>95</duration>
+        <duration>87</duration>
       </concept>
       <concept id="junit5:RepeatedTestMethod" abstract="false">
         <description>Finds all test methods (i.e. annotated with "@org.junit.jupiter.api.RepeatedTest") and
@@ -228,7 +228,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>58</duration>
+        <duration>60</duration>
       </concept>
       <concept id="junit5:TestClass" abstract="false">
         <description>Labels all classes containing test methods with "Test" and "Junit5".</description>
@@ -306,7 +306,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>78</duration>
+        <duration>92</duration>
         <required-concept id="junit5:ParameterizedTestMethod">
           <status>success</status>
         </required-concept>
@@ -328,7 +328,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>111</duration>
+        <duration>110</duration>
         <required-concept id="junit5:TestClass">
           <status>success</status>
         </required-concept>
@@ -346,9 +346,9 @@ labels them with "Test", "Repeated", and "Junit5".</description>
           <status>success</status>
         </required-concept>
       </constraint>
-      <duration>574</duration>
+      <duration>578</duration>
     </group>
-    <group id="jqassistant-plugin-plugin:Default" date="2026-04-27T06:33:33">
+    <group id="jqassistant-plugin-plugin:Default" date="2026-05-04T15:18:32">
       <concept id="neo4j:Procedure" abstract="false">
         <description>Labels all types annotated with "@org.neo4j.procedure.Procedure" with `Neo4j` and `Procedure`.</description>
         <verificationResult>
@@ -357,7 +357,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>46</duration>
+        <duration>56</duration>
       </concept>
       <concept id="jqassistant-plugin-plugin:PluginDescriptor" abstract="false">
         <description>Labels jQAssistant plugin descriptor files with `jQAssistant` and `PluginDescriptor`.</description>
@@ -403,7 +403,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>66</duration>
+        <duration>64</duration>
       </concept>
       <concept id="jqassistant-plugin-plugin:PluginRegistersProcedure" abstract="false">
         <description>Creates a `REGISTERS` relation between all procedure class elements of the jQAssistant plugin
@@ -414,7 +414,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>162</duration>
+        <duration>156</duration>
         <required-concept id="jqassistant-plugin-plugin:PluginDescriptor">
           <status>success</status>
         </required-concept>
@@ -444,7 +444,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>50</duration>
+        <duration>54</duration>
       </concept>
       <concept id="jqassistant-plugin-plugin:PluginRegistersUserFunction" abstract="false">
         <description>Creates a `REGISTERS` relation between all function class elements of the jQAssistant plugin
@@ -455,7 +455,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="4">info</severity>
-        <duration>140</duration>
+        <duration>132</duration>
         <required-concept id="jqassistant-plugin-plugin:PluginDescriptor">
           <status>success</status>
         </required-concept>
@@ -468,7 +468,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="2">major</severity>
-        <duration>41</duration>
+        <duration>43</duration>
         <required-concept id="neo4j:UserFunction">
           <status>success</status>
         </required-concept>
@@ -484,14 +484,14 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="3">minor</severity>
-        <duration>149</duration>
+        <duration>148</duration>
         <required-concept id="jqassistant-plugin-plugin:PluginDescriptor">
           <status>success</status>
         </required-concept>
       </constraint>
-      <duration>750</duration>
+      <duration>758</duration>
     </group>
-    <group id="jqassistant-plugin-package:Default" date="2026-04-27T06:33:33">
+    <group id="jqassistant-plugin-package:Default" date="2026-05-04T15:18:33">
       <concept id="java:GeneratedLombokType" abstract="false">
         <description>Labels types generated by Lombok as 'Generated' (requires 'lombok.addLombokGeneratedAnnotation=true' in 'lombok.config').</description>
         <result>
@@ -512,7 +512,7 @@ labels them with "Test", "Repeated", and "Junit5".</description>
         </verificationResult>
         <status>success</status>
         <severity level="3">minor</severity>
-        <duration>54</duration>
+        <duration>70</duration>
       </concept>
       <concept id="java:GeneratedType" abstract="false">
         <description>Reports the count of types labeled with `Generated`, grouped by containing artifact.</description>
@@ -540,8 +540,8 @@ labels them with "Test", "Repeated", and "Junit5".</description>
           <status>success</status>
         </required-concept>
       </constraint>
-      <duration>180</duration>
+      <duration>200</duration>
     </group>
-    <duration>182</duration>
+    <duration>202</duration>
   </group>
 </jqassistant-report>
