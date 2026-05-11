@@ -23,7 +23,7 @@ jqassistant:
       version: 1.0.0-M1
 ----
 
-Please also ensure use of the necessary jQAssistant version in your pom.xml:
+Use at least version 2.10.0 of jQAssistant:
 
 [source,xml]
 .pom.xml
@@ -37,24 +37,11 @@ During execution of the `analyze` task or goal a file `jqassistant-sarif-report.
 === Upload to Jenkins
 
 ==== 1. Jenkins-Setup:
-- create a local jenkins-image, ensure to deploy the official Jenkins Long Term Support image
-- example command for docker:
 
-[source,bash]
-----
-docker run -p 8080:8080 jenkins/jenkins:lts
-----
-- find your password in your terminal logs, your default username should be 'admin'. You will be able to change that data later
-- (if not present yet) add a Maven and Git Installation in **manage-jenkins** (settings-wheel in the top-right corner) -> **Tools**
-- install the **Warnings**-Plugin in **manage-jenkins** -> **Plugins**. You may need to restart your container to complete the installation.
+- install the **Warnings**-Plugin. You may need to restart your container to complete the installation.
 
 ==== 2. Configuration of Jenkins-Job
-- add the `Jenkinsfile` below to the root directory of your repository
-- create a new element for your project using item type **pipeline**
-- navigate to the Pipeline-section
-- Set the Definition field to **Pipeline script from SCM**
-
-- finally select **save** and **build now** to execute your build
+- add the SARIF Issues in the `post{}` section of your Jenkinsfile as shown below
 - after execution a **jQAssistant Warnings** tab will be available in the lefthand sidebar
 
 [source,Jenkinsfile]
@@ -68,22 +55,15 @@ pipeline {
     }
 
     stages {
+        // Scanning and generating reports during the projects build proccess
         stage('Build & Analyze') {
-            steps {
-                sh 'mvn clean verify'
-            }
-        }
-        stage('Archive Results') {
-            steps {
-                archiveArtifacts artifacts: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json',
-                                 fingerprint: true,
-                                 onlyIfSuccessful: true
-            }
+           ...
         }
     }
 
     post {
         always {
+            // capturing the issues on jenkins
             recordIssues(
                 tool: sarif(pattern: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'),
                 id: 'jQAssistant',
