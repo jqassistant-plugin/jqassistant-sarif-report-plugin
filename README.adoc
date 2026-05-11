@@ -23,5 +23,14 @@ jqassistant:
       version: 1.0.0-M1
 ----
 
+Please also ensure use of the necessary jQAssistant version in your pom.xml:
+
+[source,xml]
+.pom.xml
+----
+<properties>
+   <jqassistant.version>2.10.0-M2</jqassistant.version>
+</properties>
+----
 During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
 
