@@ -22,6 +22,21 @@ jqassistant:
       artifact-id: jqassistant-sarif-report-plugin
       version: 1.0.0-M1
 ----
+You can additionally configure, how the report-message will be displayed since a couple of platforms do support a minimum of Markdown display:
+
+[source,yaml]
+..jqassistant.yml
+----
+  analyze:
+    report:
+      properties:
+        sarif:
+          report:
+            message:
+              text: title       #valid inputs: full, details
+              markdown: details #valid inputs: full, title, none
+
+----
 
 Use at least version 2.10.0 of jQAssistant:
 
@@ -33,6 +48,35 @@ Use at least version 2.10.0 of jQAssistant:
 </properties>
 ----
 During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
+
+=== Upload to GitHub
+Upload to GitHub must be declared in `.github/workflows/`.The jQAssistant findings will appear in the `Security and Quality` tab on GitHub.
+
+Find an Example workflow below:
+
+[source,yaml]
+.ci.yml
+----
+name: generate and upload SARIF
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-lastest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - name: build
+        # build your project before upload to generate SARIF-findings
+      - name: Upload SARIF-Report
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ./target/jqassistant/report/sarif/jqassistant-sarif-report.json
+          category: jQAssistant
+          ref: ${{ github.ref }}
+          sha: ${{ github.sha }}
+----
 
 === Upload to Jenkins
 
@@ -73,4 +117,10 @@ pipeline {
     }
 }
 ----
+
+=== Upload to SonarQube/SonarCloud
+
+==== 1. Upload to SonarServer
+- make sure to run your build with `mvn install` instead of `mvn verify` in order to actually generate the SARIF
+- add `-Dsonar.sarifReportPaths=target/jqassistant/report/sarif/jqassistant-sarif-report.json` at the end of your commandline call
 
