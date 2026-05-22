@@ -22,7 +22,9 @@ jqassistant:
       artifact-id: jqassistant-sarif-report-plugin
       version: 1.0.0-M1
 ----
-You can additionally configure, how the report-message will be displayed since a couple of platforms do support a minimum of Markdown display:
+**Configuration:**
+
+You can optionally configure, how the report messages are formatted since a couple of platforms do support a minimum of Markdown display. The Example will show the default configuration:
 
 [source,yaml]
 ..jqassistant.yml
@@ -33,10 +35,43 @@ You can additionally configure, how the report-message will be displayed since a
         sarif:
           report:
             message:
-              text: title       #valid inputs: full, details
-              markdown: details #valid inputs: full, title, none
+              text: full       #valid inputs: title, details
+              markdown: full   #valid inputs: title, details, none
 
 ----
+**Available Attributes:**
+
+[cols="1h,3"]
+|===
+| `title`
+|contains a short description of the issue
+
+| `details`
+|contains details about the issue's location and the type of code element the issue is attached to
+
+| `full`
+|contains the full information of both `title` and `details`
+
+| `none`
+|does not contain information and can only be used in the `markdown` attribute
+
+|===
+
+**Recommended Platform Settings:**
+
+[cols="1h,2", option="header"]
+|===
+|Target Platform |Recommended Configuration
+
+|GitHub & Jenkins
+|`text: title` +
+`markdown: details`
+
+|SonarQube
+|`text: full` +
+`markdown: none`
+
+|===
 
 Use at least version 2.10.0 of jQAssistant:
 
@@ -50,7 +85,7 @@ Use at least version 2.10.0 of jQAssistant:
 During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
 
 === Upload to GitHub
-Upload to GitHub must be declared in `.github/workflows/`.The jQAssistant findings will appear in the `Security and Quality` tab on GitHub.
+Upload to GitHub must be declared in `.github/workflows/`. The jQAssistant findings will appear in the `Security and Quality` tab on GitHub.
 
 Find an Example workflow below:
 
@@ -61,7 +96,7 @@ name: generate and upload SARIF
 jobs:
   build:
     name: build
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
       contents: read
@@ -82,10 +117,10 @@ jobs:
 
 ==== 1. Jenkins-Setup:
 
-- install the **Warnings**-Plugin. You may need to restart your container to complete the installation.
+- install the **Warnings**(or Warnings-ng)-Plugin. You may need to restart your container to complete the installation.
 
 ==== 2. Configuration of Jenkins-Job
-- add the SARIF Issues in the `post{}` section of your Jenkinsfile as shown below
+- add the SARIF Issues in the `post{}` section of your Jenkinsfile
 - after execution a **jQAssistant Warnings** tab will be available in the lefthand sidebar
 
 [source,Jenkinsfile]
@@ -118,9 +153,36 @@ pipeline {
 }
 ----
 
-=== Upload to SonarQube/SonarCloud
+=== Upload to SonarQube (for maven-based Projects)
 
 ==== 1. Upload to SonarServer
-- make sure to run your build with `mvn install` instead of `mvn verify` in order to actually generate the SARIF
 - add `-Dsonar.sarifReportPaths=target/jqassistant/report/sarif/jqassistant-sarif-report.json` at the end of your commandline call
 
+==== 2. Upload to SonarCloud
+
+- Save your sonar token in the secrets of your Repository on GitHub
+- add the following code to your `ci.yml`
+
+[source,yaml]
+.ci.yml
+----
+jobs:
+  build-and-upload:
+    name: Upload to SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+     - uses: actions/setup-java@v4
+       with:
+         distribution: 'temurin'
+         java-version: '17'
+     - name: Build and Analyze
+       run: |
+         mvn verify --batch-mode sonar:sonar \
+         -Dsonar.host.url=https://sonarcloud.io \
+         -Dsonar.projectKey=<YOUR PROJECTKEY> \
+         -Dsonar.organization=<YOUR ORGANIZATION> \
+         -Dsonar.sarifReportPaths=target/jqassistant/report/sarif/jqassistant-sarif-report.json
+       env:
+         SONAR_TOKEN: ${{ secrets.sonar_token }}
+----
