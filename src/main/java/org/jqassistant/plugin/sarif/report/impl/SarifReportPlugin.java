@@ -119,7 +119,7 @@ public class SarifReportPlugin implements ReportPlugin {
             .text(text)
             .markdown(markdown)
             .build());
-        getLocation(result, row).ifPresent(resultBuilder::location);
+        //getLocation(result, row).ifPresent(resultBuilder::location);
         return resultBuilder.build();
     }
 

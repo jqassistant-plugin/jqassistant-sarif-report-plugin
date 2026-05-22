@@ -16,19 +16,7 @@
             "text": "A failing constraint",
             "markdown": "|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: java.lang.String issueField\n"
           },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": ".jqassistant.yml"
-                },
-                "region": {
-                  "startLine": 1,
-                  "endLine": 1
-                }
-              }
-            }
-          ],
+          "locations": [  ],
           "properties": {
             "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
@@ -41,19 +29,7 @@
             "text": "A failing constraint",
             "markdown": "|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: void issueMethod()\n"
           },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": ".jqassistant.yml"
-                },
-                "region": {
-                  "startLine": 1,
-                  "endLine": 1
-                }
-              }
-            }
-          ],
+          "locations": [  ],
           "properties": {
             "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithFailures"
