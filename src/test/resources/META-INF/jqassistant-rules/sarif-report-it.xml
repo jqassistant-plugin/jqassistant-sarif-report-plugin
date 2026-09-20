@@ -33,4 +33,12 @@
         ]]></cypher>
         <report primaryColumn="Member"/>
     </constraint>
+
+    <constraint id="sarif-report-it:ConstraintWithoutLocation">
+        <description>A failing constraint without location.</description>
+        <cypher><![CDATA[
+        RETURN
+          "This is a failure" as Failure
+        ]]></cypher>
+    </constraint>
 </jqassistant-rules>

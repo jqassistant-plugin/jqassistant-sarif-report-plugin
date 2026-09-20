@@ -5,17 +5,15 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Column;
+import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
-import com.buschmais.jqassistant.core.report.api.model.source.SourceLocation;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
 import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
@@ -30,7 +28,6 @@ import org.mapstruct.factory.Mappers;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.WARNING;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static java.util.Optional.empty;
 
 @Default
 @Slf4j
@@ -42,6 +39,17 @@ public class SarifReportPlugin implements ReportPlugin {
     private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
     private static final LevelMapper LEVEL_MAPPER = Mappers.getMapper(LevelMapper.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
+    private static final Location DEFAULT_LOCATION = Location.builder()
+        .physicalLocation(Location.PhysicalLocation.builder()
+            .artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
+                .uri(".jqassistant.yml")
+                .build())
+            .region(Location.PhysicalLocation.Region.builder()
+                .startLine(1)
+                .endLine(1)
+                .build())
+            .build())
+        .build();
 
     private ReportContext reportContext;
     private List<SarifResult> sarifResults;
@@ -119,40 +127,36 @@ public class SarifReportPlugin implements ReportPlugin {
             .text(text)
             .markdown(markdown)
             .build());
-        //getLocation(result, row).ifPresent(resultBuilder::location);
+        resultBuilder.location(getLocation(result, row));
         return resultBuilder.build();
     }
 
-    private Optional<Location> getLocation(Result<? extends ExecutableRule> result, Row row) {
-        //all findings are currently attached to .jqassistant.yml as the locations reported by jQA cannot be rendered into valid links yet.
-        //When the problem is solved 'getPath()' might be integrated here
+    private Location getLocation(Result<? extends ExecutableRule> result, Row row) {
+        return result.getPrimaryColumn()
+            .map(primaryColumnName -> row.getColumns()
+                .get(primaryColumnName))
+            .flatMap(Column::getSourceLocation)
+            .filter(location -> location instanceof FileLocation)
+            .map(location -> (FileLocation) location)
+            .filter(location -> location.getPath() != null)
+            .map(SarifReportPlugin::getLocation)
+            .orElse(DEFAULT_LOCATION);
+    }
+
+    private static Location getLocation(FileLocation location) {
         Location.LocationBuilder locationBuilder = Location.builder();
         Location.PhysicalLocation.PhysicalLocationBuilder physicalLocationBuilder = Location.PhysicalLocation.builder();
         physicalLocationBuilder.artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
-            .uri(".jqassistant.yml")
+            .uri(location.getPath())
             .build());
         Location.PhysicalLocation.Region.RegionBuilder regionBuilder = Location.PhysicalLocation.Region.builder()
-            .startLine(1)
-            .endLine(1);
+            .startLine(location.getStartLine()
+                .orElse(1))
+            .endLine(location.getEndLine()
+                .orElse(1));
         physicalLocationBuilder.region(regionBuilder.build());
-        Location location = locationBuilder.physicalLocation(physicalLocationBuilder.build())
+        return locationBuilder.physicalLocation(physicalLocationBuilder.build())
             .build();
-        return Optional.of(location);
-    }
-
-    private Optional<String> getPath(Result<? extends ExecutableRule> result, Row row) {
-        Optional<String> primaryColumnName = result.getPrimaryColumn();
-        if (primaryColumnName.isPresent()) {
-            Column<?> column = row.getColumns()
-                .get(primaryColumnName.get());
-            Optional<SourceLocation<?>> optionalSourceLocation = column.getSourceLocation();
-            if (optionalSourceLocation.isPresent() && optionalSourceLocation.get() instanceof FileLocation) {
-                String path = optionalSourceLocation.get()
-                    .getFileName();
-                return Optional.of(path);
-            }
-        }
-        return empty();
     }
 
     enum MessageContent {

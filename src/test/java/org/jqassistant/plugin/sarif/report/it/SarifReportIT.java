@@ -15,14 +15,24 @@ import org.junit.jupiter.api.Test;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.WARNING;
+import static com.buschmais.jqassistant.core.scanner.api.DefaultScope.NONE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.org.webcompere.modelassert.json.JsonAssertions.assertJson;
 
 public class SarifReportIT {
 
+    protected abstract static class AbstractNestedSarifReportIT extends AbstractJavaPluginIT {
+        protected void scanSourcesAndClasspathDirectory() {
+            File classesDirectory = getClassesDirectory(TypeWithIssues.class);
+            File sourceDirectory = new File(classesDirectory, "../../src/test/java");
+            getScanner().scan(sourceDirectory, null, NONE);
+            scanClassPathDirectory(classesDirectory);
+        }
+    }
+
     @Nested
-    public class WithTextAndDetailsIT extends AbstractJavaPluginIT {
+    public class WithTextAndDetailsIT extends AbstractNestedSarifReportIT {
 
         @Override
         protected Map<String, Object> getReportProperties() {
@@ -31,7 +41,7 @@ public class SarifReportIT {
 
         @Test
         void verifyTitleAndDetailsOnWarning() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithWarnings", "TitleAndDetails", WARNING, result);
@@ -39,7 +49,7 @@ public class SarifReportIT {
 
         @Test
         void verifyTitleAndDetailsOnFailure() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithFailures", "TitleAndDetails", FAILURE, result);
@@ -47,7 +57,7 @@ public class SarifReportIT {
     }
 
     @Nested
-    public class FullContentIT extends AbstractJavaPluginIT {
+    public class FullContentIT extends AbstractNestedSarifReportIT {
 
         @Override
         protected Map<String, Object> getReportProperties() {
@@ -56,7 +66,7 @@ public class SarifReportIT {
 
         @Test
         void verifyFullContentOnWarning() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithWarnings", "Full", WARNING, result);
@@ -64,7 +74,7 @@ public class SarifReportIT {
 
         @Test
         void verifyFullContentOnFailure() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithFailures", "Full", FAILURE, result);
@@ -72,7 +82,7 @@ public class SarifReportIT {
     }
 
     @Nested
-    public class TextOnlyContentIT extends AbstractJavaPluginIT {
+    public class TextOnlyContentIT extends AbstractNestedSarifReportIT {
 
         @Override
         protected Map<String, Object> getReportProperties() {
@@ -81,7 +91,7 @@ public class SarifReportIT {
 
         @Test
         void verifyTextOnlyContentOnWarning() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithWarnings", "TextOnly", WARNING, result);
@@ -89,7 +99,8 @@ public class SarifReportIT {
 
         @Test
         void verifyTextOnlyContentOnFailure() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
+
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithFailures", "TextOnly", FAILURE, result);
@@ -97,11 +108,12 @@ public class SarifReportIT {
     }
 
     @Nested
-    public class MissingConfigToDefaultIT extends AbstractJavaPluginIT {
+    public class MissingConfigToDefaultIT extends AbstractNestedSarifReportIT {
 
         @Test
         void verifyDefaultOnWarning() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
+
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithWarnings", "Full", WARNING, result);
@@ -109,16 +121,30 @@ public class SarifReportIT {
 
         @Test
         void verifyDefaultOnFailure() throws RuleException, IOException {
-            scanClassPathDirectory(getClassesDirectory(TypeWithIssues.class));
+            scanSourcesAndClasspathDirectory();
+
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithFailures", "Full", FAILURE, result);
         }
+
     }
+
+    @Nested
+    public class ConstraintWithoutLocation extends AbstractNestedSarifReportIT {
+
+        @Test
+        void verifyConstraintWithoutLocation() throws RuleException, IOException {
+            Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithoutLocation");
+
+            verify("ConstraintWithoutLocation", "Full", FAILURE, result);
+        }
+
+    }
+
 
     private void verify(String constraintId, String referencePath, Result.Status expectedStatus, Result<Constraint> result) throws IOException {
         assertThat(result.getStatus()).isEqualTo(expectedStatus);
-
         File sarifReport = new File("target/jqassistant/report/sarif/jqassistant-sarif-report.json");
         assertThat(sarifReport).exists();
         String expectedJson = IOUtils.toString(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + referencePath + ".json"), UTF_8);

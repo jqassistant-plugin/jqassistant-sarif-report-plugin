@@ -16,7 +16,19 @@
             "text": "A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: java.lang.String issueField ",
             "markdown": "A failing constraint\n|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: java.lang.String issueField\n"
           },
-          "locations": [  ],
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/test/java/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
           "properties": {
             "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
@@ -29,7 +41,19 @@
             "text": "A failing constraint |Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues |Member: void issueMethod() ",
             "markdown": "A failing constraint\n|Type: org.jqassistant.plugin.sarif.report.it.TypeWithIssues\n|Member: void issueMethod()\n"
           },
-          "locations": [  ],
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/test/java/org/jqassistant/plugin/sarif/report/it/TypeWithIssues.java"
+                },
+                "region": {
+                  "startLine": 10,
+                  "endLine": 11
+                }
+              }
+            }
+          ],
           "properties": {
             "type": "issue",
             "check_name": "[jQAssistant]sarif-report-it:ConstraintWithWarnings"
