@@ -11,6 +11,8 @@ This requires a https://github.com/jQAssistant/jqassistant/issues/1077[change in
 
 == Setup
 
+NOTE: This plugin requires jQAssistant 2.10.x or later.
+
 The plugin must be declared in the jQAssistant configuration:
 
 [source,yaml]
@@ -20,7 +22,7 @@ jqassistant:
   plugins:
     - group-id: org.jqassistant.plugin
       artifact-id: jqassistant-sarif-report-plugin
-      version: 1.0.0-M1
+      version: 1.0.0-M2
 ----
 
 During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
