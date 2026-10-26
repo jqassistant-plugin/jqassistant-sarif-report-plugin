@@ -3,6 +3,7 @@ package org.jqassistant.plugin.sarif.report.it;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
@@ -147,7 +148,8 @@ public class SarifReportIT {
         assertThat(result.getStatus()).isEqualTo(expectedStatus);
         File sarifReport = new File("target/jqassistant/report/sarif/jqassistant-sarif-report.json");
         assertThat(sarifReport).exists();
-        String expectedJson = IOUtils.toString(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + referencePath + ".json"), UTF_8);
+        String expectedJson = IOUtils.toString(
+            Objects.requireNonNull(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + referencePath + ".json")), UTF_8);
         assertJson(sarifReport).isEqualTo(expectedJson);
     }
 }

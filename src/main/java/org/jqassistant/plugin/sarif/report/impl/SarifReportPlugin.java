@@ -2,9 +2,7 @@ package org.jqassistant.plugin.sarif.report.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
 import com.buschmais.jqassistant.core.report.api.ReportException;
@@ -19,10 +17,7 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.jqassistant.plugin.sarif.report.api.impl.model.Location;
-import org.jqassistant.plugin.sarif.report.api.impl.model.Run;
-import org.jqassistant.plugin.sarif.report.api.impl.model.SarifReport;
-import org.jqassistant.plugin.sarif.report.api.impl.model.SarifResult;
+import org.jqassistant.plugin.sarif.report.api.impl.model.*;
 import org.mapstruct.factory.Mappers;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
@@ -55,6 +50,8 @@ public class SarifReportPlugin implements ReportPlugin {
     private List<SarifResult> sarifResults;
     private MessageContent textContent;
     private MessageContent markdownContent;
+    private List<Rule> rules;
+    private Set<String> registeredRuleIds;
 
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException {
@@ -72,6 +69,8 @@ public class SarifReportPlugin implements ReportPlugin {
     @Override
     public void begin() {
         sarifResults = new LinkedList<>();
+        rules = new ArrayList<>();
+        registeredRuleIds = new HashSet<>();
     }
 
     @Override
@@ -80,10 +79,18 @@ public class SarifReportPlugin implements ReportPlugin {
         if (FAILURE.equals(status) || WARNING.equals(status)) {
             ExecutableRule<?> executableRule = result.getRule();
             Constraint constraint = (Constraint) executableRule;
+            Rule.DefaultConfiguration.DefaultConfigurationBuilder levelBuilder = Rule.DefaultConfiguration.builder();
             for (Row row : result.getRows()) {
                 if (!row.isHidden()) {
                     sarifResults.add(getSarifResult(result, constraint, row));
+                    levelBuilder.level(LEVEL_MAPPER.toReport(row.getStatus()));
                 }
+            }
+            if (registeredRuleIds.add(constraint.getId())) {
+                rules.add(Rule.builder()
+                    .id(constraint.getId())
+                    .defaultConfiguration(levelBuilder.build())
+                    .build());
             }
         }
     }
@@ -97,6 +104,7 @@ public class SarifReportPlugin implements ReportPlugin {
             .runs(List.of(Run.builder()
                 .tool(Run.Tool.builder()
                     .driver(Run.Tool.Driver.builder()
+                        .rules(rules)
                         .build())
                     .build())
                 .results(this.sarifResults)
@@ -117,8 +125,8 @@ public class SarifReportPlugin implements ReportPlugin {
             .properties(SarifResult.SarifProperties.builder()
                 .checkName("[jQAssistant]" + constraint.getId())
                 .build())
-            .level(LEVEL_MAPPER.toReport(result.getStatus()))
-            .ruleId(row.getKey());
+            .ruleId(constraint.getId())
+            .partialFingerprints(SarifResult.partialFingerprints.builder().rowKey(row.getKey()).build());
 
         String text = this.textContent.toMessage(constraint, row, " ");
         String markdown = this.markdownContent.toMessage(constraint, row, "\n");
@@ -130,6 +138,7 @@ public class SarifReportPlugin implements ReportPlugin {
         resultBuilder.location(getLocation(result, row));
         return resultBuilder.build();
     }
+
 
     private Location getLocation(Result<? extends ExecutableRule> result, Row row) {
         return result.getPrimaryColumn()
