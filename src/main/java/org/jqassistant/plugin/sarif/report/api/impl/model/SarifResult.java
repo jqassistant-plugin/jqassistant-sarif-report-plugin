@@ -14,28 +14,11 @@ import lombok.ToString;
 public class SarifResult {
 
     private String ruleId;
-    private Message message;
+    private Text message;
 
     @Singular
     private List<Location> locations;
-    private partialFingerprints partialFingerprints;
     private SarifProperties properties;
-
-    @Builder
-    @Getter
-    @ToString
-    public static class Message {
-
-        private String text;
-        private String markdown;
-    }
-
-    @Builder
-    @Getter
-    @ToString
-    public static class partialFingerprints {
-        private String rowKey;
-    }
 
     @Builder
     @Getter

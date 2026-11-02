@@ -10,6 +10,7 @@ import lombok.ToString;
 public class Rule {
 
     private String id;
+    private Text shortDescription;
     private DefaultConfiguration defaultConfiguration;
 
     @Builder

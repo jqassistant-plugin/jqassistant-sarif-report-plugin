@@ -30,8 +30,6 @@ public class SarifReportPlugin implements ReportPlugin {
 
     public static final String REPORT_DIRECTORY = "sarif";
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
-    private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
-    private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
     private static final LevelMapper LEVEL_MAPPER = Mappers.getMapper(LevelMapper.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
     private static final Location DEFAULT_LOCATION = Location.builder()
@@ -48,22 +46,13 @@ public class SarifReportPlugin implements ReportPlugin {
 
     private ReportContext reportContext;
     private List<SarifResult> sarifResults;
-    private MessageContent textContent;
-    private MessageContent markdownContent;
     private List<Rule> rules;
     private Set<String> registeredRuleIds;
 
     @Override
-    public void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException {
+    public void configure(ReportContext reportContext, Map<String, Object> properties) {
 
         this.reportContext = reportContext;
-
-        this.textContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name())).toUpperCase());
-        if (this.textContent == MessageContent.NONE) {
-            throw new ReportException("sarif.report.message.text cannot be NONE");
-        }
-
-        this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.FULL.name())).toUpperCase());
     }
 
     @Override
@@ -89,6 +78,9 @@ public class SarifReportPlugin implements ReportPlugin {
             if (registeredRuleIds.add(constraint.getId())) {
                 rules.add(Rule.builder()
                     .id(constraint.getId())
+                    .shortDescription(Text.builder()
+                        .text(constraint.getDescription())
+                        .build())
                     .defaultConfiguration(levelBuilder.build())
                     .build());
             }
@@ -125,20 +117,16 @@ public class SarifReportPlugin implements ReportPlugin {
             .properties(SarifResult.SarifProperties.builder()
                 .checkName("[jQAssistant]" + constraint.getId())
                 .build())
-            .ruleId(constraint.getId())
-            .partialFingerprints(SarifResult.partialFingerprints.builder().rowKey(row.getKey()).build());
+            .ruleId(constraint.getId());
 
-        String text = this.textContent.toMessage(constraint, row, " ");
-        String markdown = this.markdownContent.toMessage(constraint, row, "\n");
+        String text = formatColumns(constraint.getDescription(), row);
 
-        resultBuilder.message(SarifResult.Message.builder()
+        resultBuilder.message(Text.builder()
             .text(text)
-            .markdown(markdown)
             .build());
         resultBuilder.location(getLocation(result, row));
         return resultBuilder.build();
     }
-
 
     private Location getLocation(Result<? extends ExecutableRule> result, Row row) {
         return result.getPrimaryColumn()
@@ -168,52 +156,23 @@ public class SarifReportPlugin implements ReportPlugin {
             .build();
     }
 
-    enum MessageContent {
-        TITLE {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return constraint.getDescription();
-            }
-        },
-        DETAILS {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return formatColumns(null, row, separatingCharacter);
-            }
-        },
-        NONE {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return null;
-            }
-        },
-        FULL {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return formatColumns(constraint.getDescription(), row, separatingCharacter);
-            }
-        };
-
-        protected String formatColumns(String description, Row row, String separatingCharacter) {
-            StringBuilder message = new StringBuilder();
-            if (description != null) {
-                message.append(description)
-                    .append(separatingCharacter);
-            }
-            row.getColumns()
-                .forEach((key, value) -> {
-                    if (!"location".equalsIgnoreCase(key)) {
-                        message.append("|")
-                            .append(key)
-                            .append(": ")
-                            .append(value.getLabel())
-                            .append(separatingCharacter);
-                    }
-                });
-            return message.toString();
+    private String formatColumns(String description, Row row) {
+        StringBuilder message = new StringBuilder();
+        if (description != null) {
+            message.append(description)
+                .append(" ");
         }
-
-        abstract String toMessage(Constraint constraint, Row row, String separatingCharacter);
+        row.getColumns()
+            .forEach((key, value) -> {
+                if (!"location".equalsIgnoreCase(key)) {
+                    message.append("|")
+                        .append(key)
+                        .append(": ")
+                        .append(value.getLabel())
+                        .append(" ");
+                }
+            });
+        return message.toString();
     }
 
 }

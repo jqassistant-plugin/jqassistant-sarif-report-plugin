@@ -8,6 +8,9 @@
         "rules": [
           {
             "id": "sarif-report-it:ConstraintWithoutLocation",
+            "shortDescription": {
+              "text": "A failing constraint without location."
+            },
             "defaultConfiguration": {
               "level": "error"
             }
@@ -18,8 +21,7 @@
     "results" : [ {
       "ruleId" : "sarif-report-it:ConstraintWithoutLocation",
       "message" : {
-        "text" : "A failing constraint without location. |Failure: This is a failure ",
-        "markdown" : "A failing constraint without location.\n|Failure: This is a failure\n"
+        "text" : "A failing constraint without location. |Failure: This is a failure "
       },
       "locations" : [ {
         "physicalLocation" : {
@@ -32,9 +34,6 @@
           }
         }
       } ],
-      "partialFingerprints": {
-        "rowKey": "a40dbad3bd58e2fdf245e86f2bd71de6c3ac9f0d434d46e5fa9aa96bbfb83cb2"
-      },
       "properties" : {
         "type" : "issue",
         "check_name" : "[jQAssistant]sarif-report-it:ConstraintWithoutLocation"
