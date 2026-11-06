@@ -58,7 +58,7 @@ public class SarifReportIT {
         }
     }
 
-  /*  @Nested
+    @Nested
     public class ConstraintWithoutLocation extends AbstractNestedSarifReportIT {
 
         @Test
@@ -68,7 +68,7 @@ public class SarifReportIT {
             verify("ConstraintWithoutLocation",  FAILURE, result);
         }
 
-    } */
+    }
 
 
     private void verify(String constraintId, Result.Status expectedStatus, Result<Constraint> result) throws IOException {

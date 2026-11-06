@@ -165,7 +165,7 @@ public class SarifReportPlugin implements ReportPlugin {
         row.getColumns()
             .forEach((key, value) -> {
                 if (!"location".equalsIgnoreCase(key)) {
-                    message.append("|")
+                    message.append("| ")
                         .append(key)
                         .append(": ")
                         .append(value.getLabel())

@@ -21,7 +21,7 @@
     "results" : [ {
       "ruleId" : "sarif-report-it:ConstraintWithoutLocation",
       "message" : {
-        "text" : "A failing constraint without location. |Failure: This is a failure "
+        "text" : "A failing constraint without location. | Failure: This is a failure "
       },
       "locations" : [ {
         "physicalLocation" : {
