@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.jqassistant.plugin.sarif.report.api.impl.model.*;
+import org.jqassistant.plugin.sarif.report.api.model.*;
 import org.mapstruct.factory.Mappers;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
@@ -68,21 +68,22 @@ public class SarifReportPlugin implements ReportPlugin {
         if (FAILURE.equals(status) || WARNING.equals(status)) {
             ExecutableRule<?> executableRule = result.getRule();
             Constraint constraint = (Constraint) executableRule;
+
             Rule.DefaultConfiguration.DefaultConfigurationBuilder levelBuilder = Rule.DefaultConfiguration.builder();
-            for (Row row : result.getRows()) {
-                if (!row.isHidden()) {
-                    sarifResults.add(getSarifResult(result, constraint, row));
-                    levelBuilder.level(LEVEL_MAPPER.toReport(row.getStatus()));
-                }
-            }
             if (registeredRuleIds.add(constraint.getId())) {
                 rules.add(Rule.builder()
                     .id(constraint.getId())
                     .shortDescription(Text.builder()
                         .text(constraint.getDescription())
                         .build())
-                    .defaultConfiguration(levelBuilder.build())
+                    .defaultConfiguration(levelBuilder.level(LEVEL_MAPPER.toReport(result.getStatus()))
+                        .build())
                     .build());
+            }
+            for (Row row : result.getRows()) {
+                if (!row.isHidden()) {
+                    sarifResults.add(getSarifResult(result, constraint, row));
+                }
             }
         }
     }

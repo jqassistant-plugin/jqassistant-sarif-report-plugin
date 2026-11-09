@@ -35,11 +35,6 @@ public class SarifReportIT {
     @Nested
     public class TextOnlyContentIT extends AbstractNestedSarifReportIT {
 
-        @Override
-        protected Map<String, Object> getReportProperties() {
-            return Map.of("sarif.report.message.text", "FULL", "sarif.report.message.markdown", "NONE");
-        }
-
         @Test
         void verifyTextOnlyContentOnWarning() throws RuleException, IOException {
             scanSourcesAndClasspathDirectory();

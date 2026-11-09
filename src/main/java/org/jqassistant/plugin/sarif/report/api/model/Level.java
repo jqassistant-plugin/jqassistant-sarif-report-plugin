@@ -1,4 +1,4 @@
-package org.jqassistant.plugin.sarif.report.api.impl.model;
+package org.jqassistant.plugin.sarif.report.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
