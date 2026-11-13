@@ -10,8 +10,16 @@ import lombok.ToString;
 public class Rule {
 
     private String id;
-    private Text shortDescription;
+    private MultiformatMessageString shortDescription;
     private DefaultConfiguration defaultConfiguration;
+
+    @Builder
+    @Getter
+    @ToString
+    public static class MultiformatMessageString {
+
+        private String text;
+    }
 
     @Builder
     @Getter

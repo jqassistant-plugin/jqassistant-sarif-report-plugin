@@ -11,10 +11,10 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class SarifResult {
+public class Result {
 
     private String ruleId;
-    private Text message;
+    private Message message;
 
     @Singular
     private List<Location> locations;
@@ -23,6 +23,15 @@ public class SarifResult {
     @Builder
     @Getter
     @ToString
+    public static class Message {
+
+        private String text;
+    }
+
+    @Builder
+    @Getter
+    @ToString
+
     public static class SarifProperties {
 
         @Builder.Default

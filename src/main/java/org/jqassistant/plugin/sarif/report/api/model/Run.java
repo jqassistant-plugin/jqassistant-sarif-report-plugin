@@ -12,7 +12,7 @@ import lombok.ToString;
 public class Run {
 
     private Tool tool;
-    private List<SarifResult> results;
+    private List<Result> results;
 
     @Builder
     @Getter

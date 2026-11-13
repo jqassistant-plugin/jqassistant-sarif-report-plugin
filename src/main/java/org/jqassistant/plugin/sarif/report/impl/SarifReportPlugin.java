@@ -2,6 +2,8 @@ package org.jqassistant.plugin.sarif.report.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import com.buschmais.jqassistant.core.report.api.ReportContext;
@@ -9,7 +11,6 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Column;
-import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
@@ -30,41 +31,47 @@ public class SarifReportPlugin implements ReportPlugin {
 
     public static final String REPORT_DIRECTORY = "sarif";
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
+    private static final String PROPERTY_DEFAULT_LOCATION = "sarif.report.default-location";
     private static final LevelMapper LEVEL_MAPPER = Mappers.getMapper(LevelMapper.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
-    private static final Location DEFAULT_LOCATION = Location.builder()
-        .physicalLocation(Location.PhysicalLocation.builder()
-            .artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
-                .uri(".jqassistant.yml")
-                .build())
-            .region(Location.PhysicalLocation.Region.builder()
-                .startLine(1)
-                .endLine(1)
-                .build())
-            .build())
-        .build();
 
     private ReportContext reportContext;
-    private List<SarifResult> sarifResults;
+    private List<Result> results;
     private List<Rule> rules;
     private Set<String> registeredRuleIds;
+    private Location defaultLocation;
 
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) {
-
         this.reportContext = reportContext;
+        String location = (String) properties.get(PROPERTY_DEFAULT_LOCATION);
+        if (location == null) {
+            this.defaultLocation = Location.builder()
+                .physicalLocation(Location.PhysicalLocation.builder()
+                    .artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
+                        .uri(".jqassistant.yml")
+                        .build())
+                    .region(Location.PhysicalLocation.Region.builder()
+                        .startLine(1)
+                        .endLine(1)
+                        .build())
+                    .build())
+                .build();
+        } else if (!Files.exists(Path.of(location))) {
+            throw new IllegalStateException("File not found. The value of '" + PROPERTY_DEFAULT_LOCATION + "' in '.jqassistant.yml' is not valid.");
+        }
     }
 
     @Override
     public void begin() {
-        sarifResults = new LinkedList<>();
+        results = new LinkedList<>();
         rules = new ArrayList<>();
         registeredRuleIds = new HashSet<>();
     }
 
     @Override
-    public void setResult(Result<? extends ExecutableRule> result) {
-        Result.Status status = result.getStatus();
+    public void setResult(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result) {
+        com.buschmais.jqassistant.core.report.api.model.Result.Status status = result.getStatus();
         if (FAILURE.equals(status) || WARNING.equals(status)) {
             ExecutableRule<?> executableRule = result.getRule();
             Constraint constraint = (Constraint) executableRule;
@@ -73,7 +80,7 @@ public class SarifReportPlugin implements ReportPlugin {
             if (registeredRuleIds.add(constraint.getId())) {
                 rules.add(Rule.builder()
                     .id(constraint.getId())
-                    .shortDescription(Text.builder()
+                    .shortDescription(Rule.MultiformatMessageString.builder()
                         .text(constraint.getDescription())
                         .build())
                     .defaultConfiguration(levelBuilder.level(LEVEL_MAPPER.toReport(result.getStatus()))
@@ -82,7 +89,7 @@ public class SarifReportPlugin implements ReportPlugin {
             }
             for (Row row : result.getRows()) {
                 if (!row.isHidden()) {
-                    sarifResults.add(getSarifResult(result, constraint, row));
+                    results.add(getSarifResult(result, constraint, row));
                 }
             }
         }
@@ -100,7 +107,7 @@ public class SarifReportPlugin implements ReportPlugin {
                         .rules(rules)
                         .build())
                     .build())
-                .results(this.sarifResults)
+                .results(this.results)
                 .build()))
             .build();
         try {
@@ -113,23 +120,23 @@ public class SarifReportPlugin implements ReportPlugin {
         }
     }
 
-    private SarifResult getSarifResult(Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
-        SarifResult.SarifResultBuilder resultBuilder = SarifResult.builder()
-            .properties(SarifResult.SarifProperties.builder()
+    private Result getSarifResult(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
+        Result.ResultBuilder resultBuilder = Result.builder()
+            .properties(Result.SarifProperties.builder()
                 .checkName("[jQAssistant]" + constraint.getId())
                 .build())
             .ruleId(constraint.getId());
 
-        String text = formatColumns(constraint.getDescription(), row);
+        String message = formatColumns(constraint.getDescription(), row);
 
-        resultBuilder.message(Text.builder()
-            .text(text)
+        resultBuilder.message(Result.Message.builder()
+            .text(message)
             .build());
         resultBuilder.location(getLocation(result, row));
         return resultBuilder.build();
     }
 
-    private Location getLocation(Result<? extends ExecutableRule> result, Row row) {
+    private Location getLocation(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result, Row row) {
         return result.getPrimaryColumn()
             .map(primaryColumnName -> row.getColumns()
                 .get(primaryColumnName))
@@ -138,7 +145,7 @@ public class SarifReportPlugin implements ReportPlugin {
             .map(location -> (FileLocation) location)
             .filter(location -> location.getPath() != null)
             .map(SarifReportPlugin::getLocation)
-            .orElse(DEFAULT_LOCATION);
+            .orElse(this.defaultLocation);
     }
 
     private static Location getLocation(FileLocation location) {
