@@ -65,6 +65,11 @@ public class SarifReportIT {
 
     }
 
+    @Nested
+    public class ConstraintWithDefaultLocation() throws RuleException, IOException {
+
+    }
+
 
     private void verify(String constraintId, Result.Status expectedStatus, Result<Constraint> result) throws IOException {
         assertThat(result.getStatus()).isEqualTo(expectedStatus);
