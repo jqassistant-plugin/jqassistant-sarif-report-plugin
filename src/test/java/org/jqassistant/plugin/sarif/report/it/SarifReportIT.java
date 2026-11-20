@@ -33,10 +33,10 @@ public class SarifReportIT {
     }
 
     @Nested
-    public class TextOnlyContentIT extends AbstractNestedSarifReportIT {
+    public class DefaultContentIT extends AbstractNestedSarifReportIT {
 
         @Test
-        void verifyTextOnlyContentOnWarning() throws RuleException, IOException {
+        void verifyDefaultContentOnWarning() throws RuleException, IOException {
             scanSourcesAndClasspathDirectory();
 
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
@@ -45,7 +45,7 @@ public class SarifReportIT {
         }
 
         @Test
-        void verifyTextOnlyContentOnFailure() throws RuleException, IOException {
+        void verifyDefaultContentOnFailure() throws RuleException, IOException {
             scanSourcesAndClasspathDirectory();
 
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithFailures", Map.of("fqn", TypeWithIssues.class.getName()));
@@ -58,21 +58,37 @@ public class SarifReportIT {
     public class ConstraintWithoutLocation extends AbstractNestedSarifReportIT {
 
         @Test
-        void verifyConstraintWithoutLocation() throws RuleException, IOException {
+        void verifyDefaultLocationDefaultValue() throws RuleException, IOException {
 
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithoutLocation");
 
-            verify("ConstraintWithoutLocation",  FAILURE, result);
+            verify("ConstraintWithoutLocation", FAILURE, result);
+        }
+    }
+
+    @Nested
+    public class ConstraintWithDefaultLocation extends AbstractNestedSarifReportIT {
+
+        @Override
+        protected Map<String, Object> getReportProperties() {
+            return Map.of("sarif.report.default-location", "pom.xml");
         }
 
+        @Test
+        void verifySetDefaultLocation() throws RuleException, IOException {
+
+            Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithoutLocation");
+
+            verify("ConstraintWithSetLocation", FAILURE, result);
+
+        }
     }
 
     private void verify(String constraintId, Result.Status expectedStatus, Result<Constraint> result) throws IOException {
         assertThat(result.getStatus()).isEqualTo(expectedStatus);
         File sarifReport = new File("target/jqassistant/report/sarif/jqassistant-sarif-report.json");
         assertThat(sarifReport).exists();
-        String expectedJson = IOUtils.toString(
-            Objects.requireNonNull(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + ".json")), UTF_8);
+        String expectedJson = IOUtils.toString(Objects.requireNonNull(SarifReportIT.class.getResourceAsStream("/reference/" + constraintId + ".json")), UTF_8);
         assertJson(sarifReport).isEqualTo(expectedJson);
     }
 }

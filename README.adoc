@@ -68,7 +68,7 @@ jobs:
 
 == Upload to Jenkins (example for maven-based projects)
 
-Make sure the “Warnings” plugin is installed and that your project's build tool is listed under `manage-jenkins -> tools` with the same reference name as the one used in your Jenkinsfile.
+Make sure the “Warnings” plugin is installed.
 
 .Jenkinsfile
 ----
@@ -77,7 +77,7 @@ agent any
 
     tools {
             maven 'Maven'
-        }
+    }
 
     stages {
         stage('build') {

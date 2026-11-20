@@ -31,7 +31,6 @@ public class Result {
     @Builder
     @Getter
     @ToString
-
     public static class SarifProperties {
 
         @Builder.Default
