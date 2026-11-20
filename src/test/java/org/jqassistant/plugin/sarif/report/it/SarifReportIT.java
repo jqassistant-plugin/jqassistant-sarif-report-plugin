@@ -38,6 +38,7 @@ public class SarifReportIT {
         @Test
         void verifyTextOnlyContentOnWarning() throws RuleException, IOException {
             scanSourcesAndClasspathDirectory();
+
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithWarnings", Map.of("fqn", TypeWithIssues.class.getName()));
 
             verify("ConstraintWithWarnings", WARNING, result);
@@ -58,7 +59,7 @@ public class SarifReportIT {
 
         @Test
         void verifyConstraintWithoutLocation() throws RuleException, IOException {
-            scanSourcesAndClasspathDirectory();
+
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithoutLocation");
 
             verify("ConstraintWithoutLocation",  FAILURE, result);
