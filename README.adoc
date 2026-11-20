@@ -2,7 +2,7 @@
 
 This is the SARIF Report Plugin of https://jqassistant.org[jQAssistant^].
 
-It allows to generate JSON files in the https://docs.oasis-open.org/sarif/sarif/v2.1.0/cs01/sarif-v2.1.0-cs01.html[SARIF format] which can be used to display jQAssistant-Findings e.g. in https://github.com[GitHub] pull requests.
+It allows to generate JSON files in the https://docs.oasis-open.org/sarif/sarif/v2.1.0/cs01/sarif-v2.1.0-cs01.html[SARIF format] which can be used to display them e.g. in https://github.com[GitHub] pull requests.
 
 For more information on jQAssistant see https://jqassistant.org[^].
 
@@ -25,3 +25,83 @@ jqassistant:
 
 During execution of the `analyze` task or goal a file `jqassistant-sarif-report.json` is created in the report directory.
 
+== Upload to GitHub
+
+[source,yaml]
+..github/workflows/ci.yml
+----
+name: CI-Workflow
+
+on:
+  push:
+    branches:
+       # use your preferred settings
+  pull_request:
+    branches:
+       # use your preferred settings
+
+jobs:
+  build:
+    name: Build and Upload SARIF
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # required to load your results in the 'security and code scanning' tab
+      contents: read
+      pull-request: write      # required if you want your results to be displayed in pull requests
+                               # -> only results related to your changed lines will be displayed
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+      - name: Build
+        run: mvn --batch-mode verify     # example for maven-based projects
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: target/jqassistant/report/sarif/jqassistant-sarif-report.json
+          category: JQAssistant
+
+----
+
+== Upload to Jenkins (example for maven-based projects)
+
+Make sure the “Warnings” plugin is installed and that your project's build tool is listed under `manage-jenkins -> tools` with the same reference name as the one used in your Jenkinsfile.
+
+.Jenkinsfile
+----
+pipeline {
+agent any
+
+    tools {
+            maven 'Maven'
+        }
+
+    stages {
+        stage('build') {
+            steps {
+                sh 'mvn clean verify'
+            }
+        }
+        stage('Archive Results') {
+            steps {
+                archiveArtifacts artifacts: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json',
+                                 fingerprint: true,
+                                 onlyIfSuccessful: true
+            }
+        }
+    }
+
+    post {
+        always {
+             recordIssues(
+                tool: sarif(pattern: 'target/jqassistant/report/sarif/jqassistant-sarif-report.json'),
+                id: 'jQAssistant',
+                name: 'jQAssistant'
+            )
+        }
+    }
+}
+----
