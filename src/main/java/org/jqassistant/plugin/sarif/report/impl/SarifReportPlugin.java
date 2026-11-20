@@ -72,8 +72,8 @@ public class SarifReportPlugin implements ReportPlugin {
     @Override
     public void setResult(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result) {
         com.buschmais.jqassistant.core.report.api.model.Result.Status status = result.getStatus();
-        if (FAILURE.equals(status) || WARNING.equals(status)) {
-            ExecutableRule<?> executableRule = result.getRule();
+        ExecutableRule<?> executableRule = result.getRule();
+        if (executableRule instanceof Constraint && FAILURE.equals(status) || WARNING.equals(status)) {
             Constraint constraint = (Constraint) executableRule;
 
             Rule.DefaultConfiguration.DefaultConfigurationBuilder levelBuilder = Rule.DefaultConfiguration.builder();
