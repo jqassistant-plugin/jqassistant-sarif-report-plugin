@@ -58,6 +58,7 @@ public class SarifReportIT {
 
         @Test
         void verifyConstraintWithoutLocation() throws RuleException, IOException {
+            scanSourcesAndClasspathDirectory();
             Result<Constraint> result = validateConstraint("sarif-report-it:ConstraintWithoutLocation");
 
             verify("ConstraintWithoutLocation",  FAILURE, result);
