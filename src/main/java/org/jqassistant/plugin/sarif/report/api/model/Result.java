@@ -1,4 +1,4 @@
-package org.jqassistant.plugin.sarif.report.api.impl.model;
+package org.jqassistant.plugin.sarif.report.api.model;
 
 import java.util.List;
 
@@ -11,10 +11,9 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class SarifResult {
+public class Result {
 
     private String ruleId;
-    private Level level;
     private Message message;
 
     @Singular
@@ -27,7 +26,6 @@ public class SarifResult {
     public static class Message {
 
         private String text;
-        private String markdown;
     }
 
     @Builder

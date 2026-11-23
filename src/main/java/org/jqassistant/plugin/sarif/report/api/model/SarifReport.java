@@ -1,4 +1,4 @@
-package org.jqassistant.plugin.sarif.report.api.impl.model;
+package org.jqassistant.plugin.sarif.report.api.model;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class SarifReport {
 
     @Builder.Default
     @JsonProperty("$schema")
-    private final String schema = "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json";
+    private final String schema = "https://json.schemastore.org/sarif-2.1.0.json";
 
     @Builder.Default
     private final String version = "2.1.0";

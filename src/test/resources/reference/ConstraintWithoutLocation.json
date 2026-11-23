@@ -1,0 +1,43 @@
+{
+  "$schema" : "https://json.schemastore.org/sarif-2.1.0.json",
+  "version" : "2.1.0",
+  "runs" : [ {
+    "tool" : {
+      "driver" : {
+        "name" : "jQAssistant",
+        "rules": [
+          {
+            "id": "sarif-report-it:ConstraintWithoutLocation",
+            "shortDescription": {
+              "text": "A failing constraint without location."
+            },
+            "defaultConfiguration": {
+              "level": "error"
+            }
+          }
+        ]
+      }
+    },
+    "results" : [ {
+      "ruleId" : "sarif-report-it:ConstraintWithoutLocation",
+      "message" : {
+        "text" : "A failing constraint without location. | Failure: This is a failure "
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : ".jqassistant.yml"
+          },
+          "region" : {
+            "startLine" : 1,
+            "endLine" : 1
+          }
+        }
+      } ],
+      "properties" : {
+        "type" : "issue",
+        "check_name" : "[jQAssistant]sarif-report-it:ConstraintWithoutLocation"
+      }
+    } ]
+  } ]
+}

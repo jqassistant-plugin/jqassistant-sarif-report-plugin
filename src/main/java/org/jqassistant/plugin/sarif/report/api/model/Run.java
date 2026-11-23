@@ -1,4 +1,4 @@
-package org.jqassistant.plugin.sarif.report.api.impl.model;
+package org.jqassistant.plugin.sarif.report.api.model;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import lombok.ToString;
 public class Run {
 
     private Tool tool;
-    private List<SarifResult> results;
+    private List<Result> results;
 
     @Builder
     @Getter
@@ -28,6 +28,8 @@ public class Run {
 
             @Builder.Default
             private final String name = "jQAssistant";
+
+            private List<Rule> rules;
         }
     }
 }

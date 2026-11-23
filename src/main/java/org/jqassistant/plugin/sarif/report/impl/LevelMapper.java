@@ -1,8 +1,6 @@
 package org.jqassistant.plugin.sarif.report.impl;
 
-import com.buschmais.jqassistant.core.report.api.model.Result.Status;
-
-import org.jqassistant.plugin.sarif.report.api.impl.model.Level;
+import org.jqassistant.plugin.sarif.report.api.model.Level;
 import org.mapstruct.Mapper;
 
 @Mapper

@@ -2,6 +2,9 @@ package org.jqassistant.plugin.sarif.report.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +14,6 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin.Default;
 import com.buschmais.jqassistant.core.report.api.model.Column;
-import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.report.api.model.Row;
 import com.buschmais.jqassistant.core.report.api.model.source.FileLocation;
 import com.buschmais.jqassistant.core.rule.api.model.Constraint;
@@ -19,10 +21,7 @@ import com.buschmais.jqassistant.core.rule.api.model.ExecutableRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.jqassistant.plugin.sarif.report.api.impl.model.Location;
-import org.jqassistant.plugin.sarif.report.api.impl.model.Run;
-import org.jqassistant.plugin.sarif.report.api.impl.model.SarifReport;
-import org.jqassistant.plugin.sarif.report.api.impl.model.SarifResult;
+import org.jqassistant.plugin.sarif.report.api.model.*;
 import org.mapstruct.factory.Mappers;
 
 import static com.buschmais.jqassistant.core.report.api.model.Result.Status.FAILURE;
@@ -35,54 +34,63 @@ public class SarifReportPlugin implements ReportPlugin {
 
     public static final String REPORT_DIRECTORY = "sarif";
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
-    private static final String PROPERTY_TEXT_DATA = "sarif.report.message.text";
-    private static final String PROPERTY_MARKDOWN_DATA = "sarif.report.message.markdown";
+    public static final String PROPERTY_DEFAULT_LOCATION = "sarif.report.default-location";
     private static final LevelMapper LEVEL_MAPPER = Mappers.getMapper(LevelMapper.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
-    private static final Location DEFAULT_LOCATION = Location.builder()
-        .physicalLocation(Location.PhysicalLocation.builder()
-            .artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
-                .uri(".jqassistant.yml")
-                .build())
-            .region(Location.PhysicalLocation.Region.builder()
-                .startLine(1)
-                .endLine(1)
-                .build())
-            .build())
-        .build();
 
     private ReportContext reportContext;
-    private List<SarifResult> sarifResults;
-    private MessageContent textContent;
-    private MessageContent markdownContent;
+    private List<Rule> rules;
+    private List<Result> results;
+    private Location defaultLocation;
 
     @Override
     public void configure(ReportContext reportContext, Map<String, Object> properties) throws ReportException {
-
         this.reportContext = reportContext;
-
-        this.textContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_TEXT_DATA, MessageContent.FULL.name())).toUpperCase());
-        if (this.textContent == MessageContent.NONE) {
-            throw new ReportException("sarif.report.message.text cannot be NONE");
+        String location = (String) properties.get(PROPERTY_DEFAULT_LOCATION);
+        if (location == null) {
+            location = ".jqassistant.yml";
+        } else if (!Files.exists(Path.of(location))) {
+            throw new ReportException("File not found. The value '" + location + "' of property '" + PROPERTY_DEFAULT_LOCATION + "' is not valid.");
         }
-
-        this.markdownContent = MessageContent.valueOf(((String) properties.getOrDefault(PROPERTY_MARKDOWN_DATA, MessageContent.FULL.name())).toUpperCase());
+        this.defaultLocation = Location.builder()
+            .physicalLocation(Location.PhysicalLocation.builder()
+                .artifactLocation(Location.PhysicalLocation.ArtifactLocation.builder()
+                    .uri(location)
+                    .build())
+                .region(Location.PhysicalLocation.Region.builder()
+                    .startLine(1)
+                    .endLine(1)
+                    .build())
+                .build())
+            .build();
     }
 
     @Override
     public void begin() {
-        sarifResults = new LinkedList<>();
+        results = new LinkedList<>();
+        rules = new ArrayList<>();
     }
 
     @Override
-    public void setResult(Result<? extends ExecutableRule> result) {
-        Result.Status status = result.getStatus();
-        if (FAILURE.equals(status) || WARNING.equals(status)) {
-            ExecutableRule<?> executableRule = result.getRule();
+    public void setResult(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result) {
+        com.buschmais.jqassistant.core.report.api.model.Result.Status status = result.getStatus();
+        ExecutableRule<?> executableRule = result.getRule();
+        if (executableRule instanceof Constraint && (FAILURE.equals(status) || WARNING.equals(status))) {
             Constraint constraint = (Constraint) executableRule;
+
+            Rule.DefaultConfiguration.DefaultConfigurationBuilder levelBuilder = Rule.DefaultConfiguration.builder();
+
+            rules.add(Rule.builder()
+                .id(constraint.getId())
+                .shortDescription(Rule.MultiformatMessageString.builder()
+                    .text(constraint.getDescription())
+                    .build())
+                .defaultConfiguration(levelBuilder.level(LEVEL_MAPPER.toReport(result.getStatus()))
+                    .build())
+                .build());
             for (Row row : result.getRows()) {
                 if (!row.isHidden()) {
-                    sarifResults.add(getSarifResult(result, constraint, row));
+                    results.add(getResult(result, constraint, row));
                 }
             }
         }
@@ -90,20 +98,20 @@ public class SarifReportPlugin implements ReportPlugin {
 
     @Override
     public void end() throws ReportException {
-
         File reportDirectory = reportContext.getReportDirectory(REPORT_DIRECTORY);
 
         SarifReport report = SarifReport.builder()
             .runs(List.of(Run.builder()
                 .tool(Run.Tool.builder()
                     .driver(Run.Tool.Driver.builder()
+                        .rules(rules)
                         .build())
                     .build())
-                .results(this.sarifResults)
+                .results(this.results)
                 .build()))
             .build();
         try {
-            File file = new File(reportDirectory, REPORT_FILE).getCanonicalFile();
+            File file = new File(reportDirectory, REPORT_FILE);
             log.info("Writing SARIF report to {}.", file);
             OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
                 .writeValue(file, report);
@@ -112,26 +120,23 @@ public class SarifReportPlugin implements ReportPlugin {
         }
     }
 
-    private SarifResult getSarifResult(Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
-        SarifResult.SarifResultBuilder resultBuilder = SarifResult.builder()
-            .properties(SarifResult.SarifProperties.builder()
+    private Result getResult(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result, Constraint constraint, Row row) {
+        Result.ResultBuilder resultBuilder = Result.builder()
+            .properties(Result.SarifProperties.builder()
                 .checkName("[jQAssistant]" + constraint.getId())
                 .build())
-            .level(LEVEL_MAPPER.toReport(result.getStatus()))
-            .ruleId(row.getKey());
+            .ruleId(constraint.getId());
 
-        String text = this.textContent.toMessage(constraint, row, " ");
-        String markdown = this.markdownContent.toMessage(constraint, row, "\n");
+        String message = formatColumns(constraint.getDescription(), row);
 
-        resultBuilder.message(SarifResult.Message.builder()
-            .text(text)
-            .markdown(markdown)
+        resultBuilder.message(Result.Message.builder()
+            .text(message)
             .build());
         resultBuilder.location(getLocation(result, row));
         return resultBuilder.build();
     }
 
-    private Location getLocation(Result<? extends ExecutableRule> result, Row row) {
+    private Location getLocation(com.buschmais.jqassistant.core.report.api.model.Result<? extends ExecutableRule> result, Row row) {
         return result.getPrimaryColumn()
             .map(primaryColumnName -> row.getColumns()
                 .get(primaryColumnName))
@@ -140,7 +145,7 @@ public class SarifReportPlugin implements ReportPlugin {
             .map(location -> (FileLocation) location)
             .filter(location -> location.getPath() != null)
             .map(SarifReportPlugin::getLocation)
-            .orElse(DEFAULT_LOCATION);
+            .orElse(this.defaultLocation);
     }
 
     private static Location getLocation(FileLocation location) {
@@ -159,52 +164,21 @@ public class SarifReportPlugin implements ReportPlugin {
             .build();
     }
 
-    enum MessageContent {
-        TITLE {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return constraint.getDescription();
-            }
-        },
-        DETAILS {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return formatColumns(null, row, separatingCharacter);
-            }
-        },
-        NONE {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return null;
-            }
-        },
-        FULL {
-            @Override
-            String toMessage(Constraint constraint, Row row, String separatingCharacter) {
-                return formatColumns(constraint.getDescription(), row, separatingCharacter);
-            }
-        };
-
-        protected String formatColumns(String description, Row row, String separatingCharacter) {
-            StringBuilder message = new StringBuilder();
-            if (description != null) {
-                message.append(description)
-                    .append(separatingCharacter);
-            }
-            row.getColumns()
-                .forEach((key, value) -> {
-                    if (!"location".equalsIgnoreCase(key)) {
-                        message.append("|")
-                            .append(key)
-                            .append(": ")
-                            .append(value.getLabel())
-                            .append(separatingCharacter);
-                    }
-                });
-            return message.toString();
+    private String formatColumns(String description, Row row) {
+        StringBuilder message = new StringBuilder();
+        if (description != null) {
+            message.append(description)
+                .append(" ");
         }
-
-        abstract String toMessage(Constraint constraint, Row row, String separatingCharacter);
+        row.getColumns()
+            .forEach((key, value) -> {
+                message.append("| ")
+                    .append(key)
+                    .append(": ")
+                    .append(value.getLabel())
+                    .append(" ");
+            });
+        return message.toString();
     }
 
 }
