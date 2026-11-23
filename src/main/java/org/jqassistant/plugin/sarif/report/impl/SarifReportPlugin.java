@@ -50,7 +50,7 @@ public class SarifReportPlugin implements ReportPlugin {
         if (location == null) {
             location = ".jqassistant.yml";
         } else if (!Files.exists(Path.of(location))) {
-            throw new ReportException("File not found. The value '" + location + "' of '" + PROPERTY_DEFAULT_LOCATION + "' is not valid.");
+            throw new ReportException("File not found. The value '" + location + "' of property '" + PROPERTY_DEFAULT_LOCATION + "' is not valid.");
         }
         this.defaultLocation = Location.builder()
             .physicalLocation(Location.PhysicalLocation.builder()

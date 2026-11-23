@@ -20,6 +20,6 @@ public class SarifReportPluginTest {
     void defaultLocationMustReferToExistingFile() {
         ReportException exception = assertThrows(ReportException.class,
             () -> testPlugin.configure(testContext, Map.of(SarifReportPlugin.PROPERTY_DEFAULT_LOCATION, "non-existing-file")));
-        assertEquals("File not found. The value 'non-existing-file' of '" + SarifReportPlugin.PROPERTY_DEFAULT_LOCATION + "' is not valid.", exception.getMessage());
+        assertEquals("File not found. The value 'non-existing-file' of property '" + SarifReportPlugin.PROPERTY_DEFAULT_LOCATION + "' is not valid.", exception.getMessage());
     }
 }
