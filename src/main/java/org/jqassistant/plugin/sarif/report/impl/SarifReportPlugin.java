@@ -111,7 +111,7 @@ public class SarifReportPlugin implements ReportPlugin {
                 .build()))
             .build();
         try {
-            File file = new File(reportDirectory, REPORT_FILE).getCanonicalFile();
+            File file = new File(reportDirectory, REPORT_FILE);
             log.info("Writing SARIF report to {}.", file);
             OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
                 .writeValue(file, report);
