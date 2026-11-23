@@ -15,12 +15,11 @@ import static org.mockito.Mockito.mock;
 public class SarifReportPluginTest {
     private final SarifReportPlugin testPlugin = new SarifReportPlugin();
     private final ReportContext testContext = mock(ReportContext.class);
-    private final String defaultLocationProperty = "sarif.report.default-location";
 
     @Test
     void defaultLocationMustReferToExistingFile() {
         ReportException exception = assertThrows(ReportException.class,
-            () -> testPlugin.configure(testContext, Map.of(defaultLocationProperty, "non-existing-file")));
-        assertEquals("File not found. The value of '" + defaultLocationProperty + "' in '.jqassistant.yml' is not valid.", exception.getMessage());
+            () -> testPlugin.configure(testContext, Map.of(SarifReportPlugin.PROPERTY_DEFAULT_LOCATION, "non-existing-file")));
+        assertEquals("File not found. The value 'non-existing-file' of '" + SarifReportPlugin.PROPERTY_DEFAULT_LOCATION + "' is not valid.", exception.getMessage());
     }
 }

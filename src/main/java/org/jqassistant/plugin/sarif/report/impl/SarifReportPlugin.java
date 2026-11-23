@@ -34,7 +34,7 @@ public class SarifReportPlugin implements ReportPlugin {
 
     public static final String REPORT_DIRECTORY = "sarif";
     public static final String REPORT_FILE = "jqassistant-sarif-report.json";
-    private static final String PROPERTY_DEFAULT_LOCATION = "sarif.report.default-location";
+    public static final String PROPERTY_DEFAULT_LOCATION = "sarif.report.default-location";
     private static final LevelMapper LEVEL_MAPPER = Mappers.getMapper(LevelMapper.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setDefaultPropertyInclusion(NON_NULL);
 
@@ -50,7 +50,7 @@ public class SarifReportPlugin implements ReportPlugin {
         if (location == null) {
             location = ".jqassistant.yml";
         } else if (!Files.exists(Path.of(location))) {
-            throw new ReportException("File not found. The value of '" + PROPERTY_DEFAULT_LOCATION + "' in '.jqassistant.yml' is not valid.");
+            throw new ReportException("File not found. The value '" + location + "' of '" + PROPERTY_DEFAULT_LOCATION + "' is not valid.");
         }
         this.defaultLocation = Location.builder()
             .physicalLocation(Location.PhysicalLocation.builder()

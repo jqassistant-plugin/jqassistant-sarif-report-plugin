@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 import org.apache.commons.io.IOUtils;
+import org.jqassistant.plugin.sarif.report.impl.SarifReportPlugin;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +72,7 @@ public class SarifReportIT {
 
         @Override
         protected Map<String, Object> getReportProperties() {
-            return Map.of("sarif.report.default-location", "pom.xml");
+            return Map.of(SarifReportPlugin.PROPERTY_DEFAULT_LOCATION, "pom.xml");
         }
 
         @Test
